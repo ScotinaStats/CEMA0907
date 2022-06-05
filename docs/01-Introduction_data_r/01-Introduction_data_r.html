@@ -1,0 +1,1166 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+  <head>
+    <title>CEMA 0907: Statistics in the Real World</title>
+    <meta charset="utf-8" />
+    <meta name="author" content="Anthony Scotina" />
+    <script src="libs/header-attrs-2.11/header-attrs.js"></script>
+    <link rel="stylesheet" href="my-theme.css" type="text/css" />
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle, inverse, title-slide
+
+# CEMA 0907: Statistics in the Real World
+## Getting Started with Data and R
+### Anthony Scotina
+
+---
+
+
+
+
+
+
+&lt;!--
+pagedown::chrome_print("~/Dropbox/Teaching/02-Brown Courses/CEMA0907-Statistics in the Real World/Slides/Chapter2/Chapter2.html")
+--&gt;
+
+
+# Sarah the chimp
+
+.pull-left[
+- In 1978, researchers Premack and Woodruff published a study in *Science* magazine, reporting an experiment where an adult chimpanzee named Sarah was shown videotapes of eight different scenarios of a human being faced with a problem.
+
+- After each videotape showing, she was presented with two photographs, one of which depicted a possible solution to the problem.
+
+- Sarah could pick the photograph with the correct solution for seven of the eight problems!
+]
+
+.pull-right[
+![](chimp.jpeg)
+]
+
+---
+
+# How?!
+
+What are **two possible explanations** for Sarah getting 7 correct answers out of 8?
+
+--
+
+1. Sarah was just guessing and got lucky. 
+
+2. Sarah can do better than just guessing. 
+
+--
+
+**Which explanation do you think is better?**
+
+--
+
+- I think explanation (1) is better. How can you convince me that (1) is *not* the better explanation?
+
+---
+
+# Refuting Explanation (1)
+
+Let's try to look at what Sarah's results would be, **if she just guessed**. 
+
+- What is a simple way to *model* guessing between two choices?
+
+--
+.center[
+&lt;img src="coin_flip.png" width="25%" /&gt;
+]
+--
+
+Let's define "heads" as a *correct answer* and "tails" as an *incorrect answer*. 
+
+- If Sarah were just guessing ("flipping a coin"), what would be the **expected** number of correct guesses ("heads")?
+
+---
+
+# Simulating Guessing
+
+If Sarah were just guessing, we would *expect* the number of correct guesses to be 4. 
+
+- However, not every set of 8 coin tosses will result in 4 heads. 
+
+- Let's repeat the set of 8 coin tosses many times, to generate the pattern for correct answers that could happen in the long run, **under the assumption that Sarah is just guessing**. 
+
+--
+.center[
+&lt;img src="01-Introduction_data_r_files/figure-html/unnamed-chunk-3-1.png" width="45%" /&gt;
+]
+
+---
+
+# What do you notice?
+
+The **distribution** of the rate of correct answers, **under the assumption that Sarah was guessing**, is centered at 0.50 (50%, or 4 correct answers out of 8). 
+
+- The red line indicates the **observed proportion** of correct answers, 7 out of 8 (87.5%). 
+
+The majority of the distribution lies between 0.25 and 0.75. 
+
+- This means that, if Sarah were actually guessing, then it would be *highly unlikely* to observe 7 out of 8 correct answers. 
+
+- Thus, we are fairly convinced that Sarah is doing better than just guessing. 
+
+--
+
+**What if Sarah got 5 correct answers out of 8 instead?** Would we still be convinced of Sarah's ability to do better than guessing?
+
+---
+
+# SPOILER ALERT!!!
+
+We just conducted a **statistical hypothesis test**, and this will be the last topic covered in Statistics in the Real World. 
+
+Let's start from the beginning...
+
+---
+
+class: center, middle
+
+# Course Introductions
+
+---
+
+# Who am I?
+
+.pull-left[
+
+**Anthony Scotina** (he/him)
+
+- Asst. Prof of Statistics at Simmons University
+
+- Graduated with a Ph.D. in [Biostatistics](https://www.brown.edu/academics/public-health/biostats/home) from Brown University in 2018.
+
+- Website/blog: [https://scotinastats.rbind.io/](https://scotinastats.rbind.io/)
+
+- I used to have many hobbies, but all I do these days is use **R**. 
+
+&lt;br&gt;
+
+- I have an 18-month old cat named **Moose**!
+]
+
+.pull-right[
+&lt;img src="cat.jpg" width="3093" /&gt;
+
+]
+    
+---
+
+class: center, middle
+
+# Who are you?
+
+---
+
+# Where are you?
+
+Statistics in the Real World!
+
+**Some information**
+
+*Assignments*:
+
+- **Problem Sets and Participation**: Problem sets will be assigned *almost* daily. See the syllabus for a detailed schedule with due dates. 
+    - You will have access to the solution after submitting your problem set to Canvas, where you'll be able to self-assess your work. 
+    
+- **Weekly Reflection**: After each week, you will be asked to write a short (1-2 paragraphs) reflection piece about your engagement and progress with the course content. 
+    
+- **R Labs**: There will be R labs completed *in class* during roughly half of the class sessions. There are *not* to be turned in, and are primarily for your own practice. 
+
+- **Mini-Projects**: Groups of 4-5 students will be responsible for weekly *mini-projects*, using material covered in class each week. Short presentations will be given on Fridays.  
+    
+---
+
+# Where are you?
+
+Statistics in the Real World!
+
+**Some information**
+
+- Our textbook:
+    - **ModernDive**: Statistical Inference via Data Science
+    - Webpage: [https://moderndive.com](https://moderndive.com)
+    - Reading the assigned chapters in the textbook BEFORE EACH CLASS is **crucial**!!!
+
+---
+
+# ModernDive 
+
+.center[
+&lt;img src="md_mobile.png" width="65%" /&gt;
+]
+
+---
+
+# Course Objectives
+
+- Learn how to answer scientific questions with **data**. 
+
+.center[
+&lt;img src="ds_pipeline.png" width="2045" /&gt;
+]
+
+- Statistics isn't just a bunch of numbers and math. We will aim to cover the entire **data science pipeline** in this course. 
+
+---
+
+# Course Objectives
+
+In order to foster a conceptual understanding of statistics, use **real data** whenever possible.
+
+**How can we do this?**
+
+- Two engines:
+    1. Mathematics: formulas, approximations, probability theory, etc.
+    2. Computing: simulations, random number generating, etc.
+  
+
+- In *this* class:
+    - Less of (1)
+    - More of (2)
+
+
+---
+
+# The "Engine"
+
+.center[
+&lt;img src="rstudio.png" width="50%" /&gt;
+]
+
+---
+
+class: center, middle
+
+# Getting Started with Data and R
+
+---
+
+# First, let's install R and R Studio...
+
+**Installing R**
+
+- Click [HERE](http://cran.wustl.edu/) to get started. 
+
+--
+
+**Installing R Studio**
+
+- Click [HERE](https://www.rstudio.com/products/rstudio/download/#download) to get started. 
+
+---
+
+# Using R Studio
+
+1. Open **R Studio** (never open **R**). 
+
+2. In the menu bar at the top of your screen: **File** -- **New File** -- **R Markdown...**
+
+.center[
+&lt;img src="r-window.png" width="75%" /&gt;
+]
+
+---
+
+# The R Studio Window
+
+.center[
+&lt;img src="r-window.png" width="50%" /&gt;
+]
+
+**The Four Panels**:
+
+1. **Console** (bottom-left): This is where you can crunch numbers or run/execute commands. 
+    - Either type code directly into the console, or run from a *script*...
+2. **Editor** (top-left): This is where you can save and edit R code, text, etc.
+    - *Save* all of your work in R Markdown (.Rmd) files!!!
+3. **Files, Packages, Help, Plots** (bottom-right): See your files, packages, help screens, and plots (more in a few...).
+4. **Environment** (top-right): Your current workspace (more in a few...).
+
+---
+
+# Before we get started...
+
+Don't worry. This class does not require you to have *any* experience with computer programming, nor is this a computer science class. 
+
+- "Should all statistics students be programmers? **No!**"
+
+- "Should all statistics students program? **Yes!**"
+    - Hadley Wickham, Chief Scientist at R Studio
+    
+--
+
+Learning R is almost like learning a **new language**. It's difficult, but *incredibly rewarding*. 
+
+- You will learn tools that *actual* statisticians and data scientists use in the **real world**!
+
+---
+
+# R Markdown Basics
+
+**R Markdown** provides a way for R (and python/SQL) users to produce a single file containing code, output, and notes. 
+
+.center[
+&lt;img src="rmarkdown.png" width="80%" /&gt;
+]
+
+---
+
+# R Markdown Code Chunks
+
+To enter and execute code in an R Markdown document, you'll need to create a **code chunk**. 
+
+.center[
+&lt;img src="code_chunk.png" width="80%" /&gt;
+]
+
+- Or just use the **keyboard shortcut** for code chunks...
+    - [command]+[option]+[i] for Macs
+    - [ctrl]+[alt]+[i] for PC
+    
+---
+
+# R Markdown Knitting
+
+To compile your R Markdown file into a finished .html (or PDF/Word doc) report, click the **Knit** button. 
+
+.center[
+&lt;img src="knit.png" width="80%" /&gt;
+]
+
+🚨**Note**🚨: This will *not work* if your code contains **errors**!
+
+- Knit **early and often** in order to catch little errors *early*!
+
+---
+
+# Code Chunk Options
+
+- `echo = FALSE`: Don't *show* code
+
+- `eval = FALSE`: Don't *evaluate* the code
+
+- `include = FALSE`: Don't show the code or the results
+
+- `message = FALSE`: Don't show the messages
+    - This is usually relevant when you load a package but want to suppress the different "welcome" messages they might give. 
+    
+- `warning = FALSE`: Don't show warning messages
+
+- `out.width = "50%"` Makes a figure half the size (you can change the percentage to fit your needs). 
+
+In general, show your code and your results, but not your messages. 
+
+**Some references**
+
+- R Markdown: The Definitive Guide, by Xie, Allaire, and Grolemund ([here](https://bookdown.org/yihui/rmarkdown/))
+
+- R Markdown Cookbook, by Xie, Dervieux, and Riederer ([here](https://bookdown.org/yihui/rmarkdown-cookbook/))
+
+---
+
+# Vectors
+
+R is built around **vectors**, which are probably the single-most important data structure you'll need to understand for this class. 
+
+--
+
+**Examples**
+
+
+```
+## [1] 3 3 8 3 3 9
+```
+
+```
+##  [1]  1  2  3  4  5  6  7  8  9 10
+```
+
+```
+##  [1]  2  4  6  8 10 12 14 16 18 20
+```
+
+```
+## [1] "I"     "have"  "a"     "cat"   "named" "Moose"
+```
+
+```
+## [1]  TRUE  TRUE FALSE FALSE  TRUE
+```
+
+--
+
+Vectors can take elements of *multiple types* (e.g., `numeric`, `character`, `logical`). 
+
+- But each vector's elements must *all* be the **same type**. 
+
+---
+
+# Creating Vectors
+
+There are *many*, **many** ways to create vectors. One way is via the `c()` function:
+
+
+```r
+c(3, 3, 8)
+
+c("I", "have", "a", "cat", "named", "Moose")
+
+c(TRUE, TRUE, FALSE, FALSE, TRUE)
+
+c("Heads", "Tails")
+```
+
+- Each element is separated by a **comma**, and the *output* is a vector. 
+
+---
+
+# Creating Vectors: `a:b`
+
+There are other ways to create vectors that can be *much* more useful than entering individual elements into `c()`. 
+
+- The `:` operator can be used to generate a sequence of *integers* from a **starting** value to an **end** value.
+
+
+```r
+1:10
+```
+
+```
+##  [1]  1  2  3  4  5  6  7  8  9 10
+```
+
+```r
+0:1
+```
+
+```
+## [1] 0 1
+```
+
+```r
+-1:4
+```
+
+```
+## [1] -1  0  1  2  3  4
+```
+
+---
+
+# Vector Operations
+
+At its core, R is a big, *fancy* statistical calculator. 
+
+- While we can **add**, **subtract**, **multiply**, and **divide** numbers like you can in any calculator, we can also perform these operations (and more!) on vectors. 
+
+
+```r
+c(1, 2, 3, 4, 5) + c(6, 7, 8, 9, 10)
+```
+
+```
+## [1]  7  9 11 13 15
+```
+
+
+```r
+c(1, 2, 3, 4, 5) * c(6, 7, 8, 9, 10)
+```
+
+```
+## [1]  6 14 24 36 50
+```
+
+- 🚨 **Note**: Make sure vectors are the same *length* when doing this!
+
+---
+
+# Assignment
+
+We can store vectors under an **alias** so we don't have to keep typing out `c()`, `seq()`, etc. 
+
+
+```r
+my_vec = c(1, 2, 3, 4, 5)
+```
+
+--
+
+
+```r
+my_vec^2
+```
+
+```
+## [1]  1  4  9 16 25
+```
+
+```r
+my_vec + my_vec
+```
+
+```
+## [1]  2  4  6  8 10
+```
+
+```r
+my_vec/2
+```
+
+```
+## [1] 0.5 1.0 1.5 2.0 2.5
+```
+
+---
+
+# Logical Vectors
+
+**Logical** vectors are made up of only *two unique "logical" elements*: 
+
+- `TRUE` or `FALSE`
+
+"Behind the scenes", `TRUE` and `FALSE` have values of `1` and `0`, respectively. 
+
+
+```r
+c(TRUE, FALSE) + c(TRUE, FALSE)
+```
+
+```
+## [1] 2 0
+```
+
+```r
+mean(c(TRUE, TRUE, TRUE, FALSE, FALSE))
+```
+
+```
+## [1] 0.6
+```
+
+---
+
+# Logical Operators
+
+Let's create two objects to use with some *logical tests*:
+
+
+```r
+moose_age = 2 # rounding up
+anthony_age = 32 # rounding down
+```
+
+--
+
+Here are some commonly-used **logical operators**
+
+- `==`: equal to
+- `!=`: not equal to
+- `&gt;`: greater than
+- `&gt;=`: greater than or equal to
+- `&lt;`: less than
+- `&lt;=`: less than or equal to
+- `%in%`: true if a value is **in** a vector
+
+---
+
+# Logical Operators
+
+The `==` operator asks whether two objects are **equal**. 
+
+The code below tests the following:
+
+&gt; Moose's age equals Anthony's age. 
+
+
+```r
+moose_age == anthony_age
+```
+
+```
+## [1] FALSE
+```
+
+--
+
+&gt; Moose's age does *not* equal Anthony's age. 
+
+
+```r
+moose_age != anthony_age
+```
+
+```
+## [1] TRUE
+```
+
+--
+
+&gt; "Moose's age is greater than Anthony's age. 
+
+
+```r
+moose_age &gt; anthony_age
+```
+
+```
+## [1] FALSE
+```
+
+---
+
+# Combining Logicals
+
+We can combine *several* logical operators to check multiple conditions!
+
+- `&amp;` for **and**, `|` for **or**
+
+The code below tests the following:
+
+&gt; Moose's age is less than Anthony's age **and** Moose's age is less than 5. 
+
+
+```r
+(moose_age &lt; anthony_age) &amp; 
+  (moose_age &lt; 5)
+```
+
+```
+## [1] TRUE
+```
+
+--
+
+&gt; Moose's age is less than Anthony's age **or** Anthony's age is less than 30. 
+
+
+```r
+(moose_age &lt; anthony_age) | 
+  (anthony_age &lt; 30)
+```
+
+```
+## [1] TRUE
+```
+
+---
+
+# Simulating Data
+
+We won't do this *too much* in this class (we'll usually be working with **real data**), but we can *simulate data* using one of R's many built-in functions. 
+
+Let's randomly sample some data from a **normal distribution** (i.e., a *bell-shaped curve*). 
+
+
+```r
+set.seed(907) # Ro control R's random number generator
+my_sample = rnorm(n = 1000, mean = 10, sd = 2)
+
+my_sample
+```
+
+```
+##    [1]  8.654466 10.216267 10.234048  7.330059 11.918426  9.724135 12.242112
+##    [8]  8.455732 12.243928  7.455587  9.449277  5.438832 11.930787  9.130663
+##   [15] 12.574922 10.727721  8.906333  6.638739  9.747085 12.065449  7.947187
+##   [22]  7.642952  8.920384  9.021932  9.332082 10.206781  8.761498  7.486680
+##   [29] 11.483212  6.561548  8.727129 12.197539  9.413502  5.790426  8.416241
+##   [36] 10.835815  7.039804  7.331920 11.140476  7.372977 10.909648  8.352912
+##   [43] 12.970961  9.393271  6.979053 10.013422  7.835197  6.817146 13.092566
+##   [50] 11.382999  9.158072  9.819015  9.122685 10.685470 12.025734 12.604873
+##   [57] 11.375301 10.042034 10.841477  6.788241  7.459775 10.970157 13.480879
+##   [64]  7.552282 11.183549  9.627813 11.062646 10.113571 13.390081  9.874710
+##   [71] 11.791086 12.844501  9.655099  7.571164 11.142211  8.961376  8.131379
+##   [78] 10.519856 14.285374 12.738609  9.951869  8.155180 10.458696  7.848436
+##   [85] 11.398217 13.083999 10.439372 10.604795 11.581790  8.759503 13.320578
+##   [92]  6.139401  8.995485  9.105814  7.941535  7.261216  8.490121  7.974707
+##   [99]  8.452841 12.350967 11.212569  9.480914 11.207623  5.831784 12.109101
+##  [106] 11.458585  8.340738  9.975151 13.634759 12.944621 12.767049  5.506826
+##  [113] 12.174932  8.168300  8.162161 12.527866 11.592476 10.577241  9.725030
+##  [120]  6.455437 10.922886 14.180577 11.710417  7.925393  8.069666 11.429414
+##  [127]  8.737349 10.737612 10.772014 12.075047  7.457281 10.784454 11.591312
+##  [134]  9.565023  8.163376 10.231039  8.624640 10.837752  7.896579  8.787316
+##  [141]  9.917890  9.522291 12.329317  7.012248 10.091070  6.401028  8.359740
+##  [148] 10.859418  9.808673 12.935539 13.405707 10.938843 10.461034 11.172248
+##  [155]  8.065151 10.363194  9.176165  9.932402 14.563593  9.893276  7.273860
+##  [162]  7.520267 11.947463  7.942293 10.724900  9.702776 11.414309  9.716325
+##  [169]  8.832674 13.227589 11.810757 11.223349  9.642334 10.004226  9.907463
+##  [176] 10.417374  9.705793 11.921984  8.929073 11.379003 10.161762 12.119316
+##  [183] 12.634832  8.629162  5.555398 10.180338  5.306603 10.245131  9.820183
+##  [190]  9.443405 11.254327  8.957431 11.111546 11.026763 11.200031 12.705092
+##  [197]  9.326269  9.681230 13.585158  7.966920  6.548573  6.965991 15.153747
+##  [204] 11.052698 11.488816  8.660876  5.211720 10.493339 10.214182 10.108408
+##  [211] 12.168492  9.926594 11.979003  9.537267  6.069373  7.917779  7.529125
+##  [218] 11.079380 11.100495 10.971979 12.028795  9.937190 10.082730 13.300749
+##  [225]  8.281744  6.301274  8.821661  9.930223 12.398402  7.351989 11.077263
+##  [232]  8.565640  9.754472 11.950269  7.094291 11.523105 11.004289 12.280042
+##  [239]  9.256502  8.401070 11.141144  9.483125  8.603235  7.610887 10.823391
+##  [246] 10.828218  9.595655 12.165560 12.123366  8.226131 11.031387 12.123502
+##  [253]  9.998289  4.288016 12.071199  5.334244 12.441576 10.482126 11.582303
+##  [260]  9.861287 10.736115 10.705174 11.291191 10.111512  9.235201 10.562335
+##  [267] 11.266193 10.111906  6.912266  6.890714 12.935504  9.534140  9.540474
+##  [274] 10.348326 13.122537 12.648615  7.820510  8.819796  9.317811 10.626614
+##  [281]  7.039148 10.957799 11.447588 10.830725  8.368320 10.140417  8.714690
+##  [288]  8.829123 14.600502  9.587216  9.102063 14.616770 10.672739  9.685476
+##  [295] 10.839795  8.688187  8.196918  7.960853  9.384650  8.754882 10.015882
+##  [302]  7.938183  9.391993 11.568497 10.591240  9.907346 13.389799 12.262269
+##  [309]  9.580385 12.952861 12.772087 11.140088  7.082416 10.987274 10.707497
+##  [316]  4.586545 12.218814 10.253866  9.497775 13.060858  9.874681  9.614152
+##  [323]  9.040068  5.674012  7.172980 11.746202 10.794192 10.719577 11.997903
+##  [330] 10.078253 11.064178 14.052076 11.343322 13.895765  6.160006  8.735213
+##  [337] 11.920271  5.540553  6.593622  9.849832 12.580471 13.468687 11.569235
+##  [344]  7.480507 11.216154 10.618488 12.619784  8.949814  6.621701  9.420620
+##  [351]  8.880123  6.483780 10.567942 10.172425  6.904534  8.619453 11.512036
+##  [358]  8.319564  9.540086  9.817392  8.975033  9.173391 13.179721  9.477543
+##  [365]  9.926482  6.919775 11.005719  9.911431 11.213316  7.862066 10.158594
+##  [372] 12.265161  9.052919 11.154239  8.563910  7.843803  8.918190 10.430091
+##  [379]  8.619337  7.031037 10.143957 11.260112  9.982262 10.614440  9.323908
+##  [386] 10.607119  8.894936  9.785229  8.234496  7.601212 10.642009 11.735184
+##  [393]  7.483647 11.140429  7.905435  8.863366 10.798980  9.121086 11.501464
+##  [400] 10.188442  8.899925 11.528651  5.398704  5.983591  6.541940 10.670507
+##  [407] 10.151124 11.108689 13.598408  7.281698  9.179692  8.025334  7.726971
+##  [414] 10.869786 12.387816  9.485094  8.787166 11.416149  9.619740  9.382883
+##  [421] 11.310742 12.046709 14.119603  9.628561  8.263660 12.821386  7.250285
+##  [428] 11.182942  9.037267 12.116403  8.220208 11.430108  8.877426 11.465333
+##  [435] 10.081287 11.851281 11.216602  7.920350 10.645017 10.597941 10.900666
+##  [442] 10.133459 12.223483  8.465186 12.831979 10.790115  9.754503 11.466033
+##  [449]  9.872780  9.684130 11.445103  8.417226 12.554478 11.415121  8.933196
+##  [456]  9.330849  9.595606  7.560905 11.877874 13.199601 11.595112  7.054805
+##  [463]  7.312888 11.333497  8.778971 10.364853 10.890229 10.758698  8.693923
+##  [470] 11.469571  9.332250 11.055046  8.054595  9.968399 11.264226 11.705742
+##  [477]  7.796860 11.236419 12.153569  8.468714  7.480685  9.935476 10.241724
+##  [484] 10.251020  9.625342 10.101161 10.260016  7.456623  9.453775  9.952713
+##  [491] 11.527950  9.309658  6.178560  9.223098 10.312766  7.887870 12.081788
+##  [498] 12.675066 14.187248  9.365563 13.688391  9.449165 11.697124  9.737455
+##  [505]  5.519616  9.749371  8.067455 10.549734 13.062728  9.998154 12.414840
+##  [512]  7.350803 11.441651  8.970512  9.296006  7.680975 12.476362  8.267364
+##  [519] 10.733024  8.909557  9.680359  8.185446 10.979609  9.385241 10.277610
+##  [526]  8.660115  7.493600 11.991307 10.671352 10.766079  7.941466 12.118366
+##  [533] 11.242158  9.593612 11.501605 10.881771  6.394202 15.672444  6.542899
+##  [540]  9.076406  9.126119 10.919526 10.889836 12.226241 11.871562 14.836383
+##  [547]  7.784759 12.633991  8.816076  8.569349 10.829343 13.749934 10.070163
+##  [554] 10.836422 10.025304 10.108401 12.831264 10.905515 10.944761 12.557448
+##  [561]  7.211713 14.163985  6.390971  9.574682 12.009178 12.134338 10.624047
+##  [568] 10.210552  9.500772 10.603154 10.981139 11.509083 10.006764 11.327219
+##  [575] 12.273552 13.051910  7.788963 12.630480 10.343764  8.842101 10.363545
+##  [582] 12.361308 11.112610  8.765931 13.230749  4.484144 13.234796 12.142275
+##  [589] 12.628782  8.437083  8.136470 10.405507 11.671000  7.962971  8.443577
+##  [596] 13.434538  8.313738 14.267228 11.906132 11.007521 10.629425 11.295886
+##  [603]  9.776472  7.421164  9.755886  6.113187 10.836178  8.405355  7.677156
+##  [610] 10.869705  7.340621 15.182118 11.373240  9.161757  7.350855  7.862902
+##  [617]  9.301358 10.456155  9.356477 10.407082 15.356813 14.333923 11.455999
+##  [624] 14.537294  7.322780  9.229697  9.593173 10.563071  7.585973 11.351373
+##  [631]  7.639634  8.466826  7.781776  9.844608 12.633953 10.284462  8.363674
+##  [638] 12.231850 10.816704 11.117075 12.036748  9.386217 11.784196  9.753622
+##  [645] 12.160293 14.868836 12.018905  9.807730 12.965276  8.688968  8.711207
+##  [652] 11.461069  7.474474 13.967478 12.396753  8.349153 11.208177 11.289666
+##  [659]  9.225719  9.423141 11.245037 12.391598  7.364886 13.533169 11.963843
+##  [666] 11.771494  5.393412 11.649044  7.659439  8.804809 10.738480  8.492543
+##  [673]  8.815371  6.791491  8.423845  7.383614 12.225360  8.379997 11.620629
+##  [680]  8.708585  8.058598 12.687679 10.022353 11.815244  8.840364  8.898146
+##  [687] 13.452663 13.032908  7.492917  9.143807  9.478299  8.475401 10.211095
+##  [694]  9.408527 12.032059  9.571114  8.452754 12.574902 11.840447 11.200222
+##  [701]  8.355171  9.674531  8.423153  7.975488 11.303252  8.466033 11.831595
+##  [708] 11.237284  8.800665  9.542810  9.211584  7.840673  7.500790  7.277505
+##  [715] 12.010849  8.770978  9.018640 11.589890  9.464832  7.673008  9.568265
+##  [722] 11.533923  9.572961 10.368313 11.675114  7.807504  9.681974  9.506498
+##  [729]  8.430328 11.144522 14.511584 10.165981 11.726107  8.599434 12.206385
+##  [736] 10.558526 11.604749 12.250843 12.115533  8.167945  8.891975 12.184046
+##  [743] 12.745667  9.186852 10.359509 15.457787 10.282471  6.755604 13.557423
+##  [750] 10.323813 11.826740  8.861651  9.714120 12.159474 12.840658 11.804504
+##  [757] 10.828551 10.580795 10.516186  5.712065  6.484005 11.091459  8.269310
+##  [764] 10.224574 11.657375  8.256784 12.218048 10.507163 12.950958  6.918018
+##  [771] 11.652285 12.338837 11.622335  8.796846 10.086806  8.276252 12.817913
+##  [778]  9.572467  6.354468  9.954073  8.965161  8.372843 10.738336  8.614454
+##  [785]  8.452870  9.776451 11.321780 11.624352  8.227806 12.330595 10.714061
+##  [792]  9.691179 12.233925 12.373762 10.303095  9.103463  8.745706  9.272718
+##  [799] 12.033540 12.185464  5.936297  8.506513 13.685292 11.284778 10.593349
+##  [806]  6.574411 13.583970 13.814777  8.914404 10.367958  6.646106  7.028596
+##  [813] 11.174726  9.442193  8.129487  8.146951 11.723003 12.772507  7.935936
+##  [820] 10.744388 10.944491  9.163847  8.665118 12.678238 12.362372 10.236092
+##  [827]  9.607815  8.647774 11.246071 13.909042 10.369792  8.574074 11.163036
+##  [834] 12.144998  6.242941 10.403327 10.193351 10.754448  5.667681 12.488810
+##  [841]  6.718410  8.162118 10.458895 10.772415  9.155644  8.598274  7.370753
+##  [848] 10.012800 14.953249 11.362512  9.865240  7.182347 10.903358  9.224623
+##  [855] 10.315342  8.770383 10.418013 10.511741 10.856802 11.618572 10.848632
+##  [862]  6.650651  8.426368  9.882686 10.587763  8.490284 11.846844 10.190826
+##  [869]  7.278919  9.926334 10.730474 13.590076 11.109043 10.763450 11.344094
+##  [876] 11.892737 12.743177 10.009299 12.074238  6.544664  9.368048 11.721208
+##  [883] 12.586514  8.786483  6.918933 10.799568 10.426027  9.255628  8.759276
+##  [890]  9.534673 11.388602 10.489175  8.677949 11.709717  8.447736  9.534241
+##  [897]  8.638630 11.321211 10.530066  9.061649 11.026132  7.516083  9.526811
+##  [904] 12.827807  7.774300  7.887447  9.593306  9.408182  6.904676  7.810664
+##  [911]  8.999142 11.550108  9.283099  8.342311  9.268073  6.638065 14.231568
+##  [918]  8.048644 10.648476 13.275688 10.032462 14.857766 12.811143  6.645319
+##  [925] 10.790741 11.628704  9.318859  8.592240  9.176514 12.853095  9.823313
+##  [932] 13.071675 10.788090  7.828359 10.411579 12.391431 11.139661  8.263228
+##  [939]  9.323807  8.055670  8.821117  8.199663 11.444069 10.934829  5.476743
+##  [946] 12.083756  7.583242  6.417238 11.444007 11.357990  9.772445 12.623483
+##  [953] 11.828482 10.156336  9.165398 11.112537 10.864085 11.614699  8.058452
+##  [960] 10.645980 10.893713 12.180134 10.537369  7.088311 11.003472  8.496157
+##  [967] 13.140325 11.387341 10.267448  6.605688  9.176851 11.555174  9.069339
+##  [974] 10.951102  9.920381  9.305831  7.628077  5.996922 12.911361  8.548143
+##  [981] 10.445212  9.420572  7.869184  9.806023  7.361044 10.885795  8.404900
+##  [988] 13.680144 11.355067 10.128707 11.825587  6.725981 11.042067 11.572893
+##  [995]  9.404775  9.353982  9.083368 10.631601 12.657965 10.486501
+```
+
+---
+
+# Some Other Useful Functions
+
+- `mean()`: calculates the **mean** of a vector
+
+
+```r
+mean(my_sample)
+```
+
+```
+## [1] 10.05411
+```
+
+- `sum()`: calculates the **sum** of a vector
+
+
+```r
+sum(my_sample)
+```
+
+```
+## [1] 10054.11
+```
+
+- `summary()`: calculates several **summary statistics** of a vector
+
+
+```r
+summary(my_sample)
+```
+
+```
+##    Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
+##   4.288   8.659  10.108  10.054  11.444  15.672
+```
+
+- plus many more!
+
+---
+
+# The `%in%` Operator
+
+The `%in%` operator is *very useful* for checking whether *multiple* elements occur in a vector. 
+
+Recall `my_sample`. Let's check whether each element equals either `5`, `10`, or `15`:
+
+
+```r
+my_sample == 5 | my_sample == 10 | my_sample == 15
+```
+
+- **Note**: The output is a **logical vector** that is the same length as `my_sample`. 
+
+--
+
+Alternatively, we could use %in%:
+
+
+```r
+my_sample %in% c(5, 10, 15)
+```
+
+---
+
+# R Packages
+
+We will be using **R packages** extensively.
+- R is *open-source*, which means that members in the community can provide additional functions, data, or documentation in a *package*. 
+- Packages are *free* and can be easily downloaded. 
+
+--
+
+**Downloading packages in R Studio**
+
+- **Packages** tab (bottom-right) -- **Install** -- Type package name and press *Install*
+- **For now**, install the following packages (separate by a comma when typing the names):
+    - `tidyverse`: suite of data science oriented packages
+    - `moderndive`: package that accompanies the textbook
+    - `infer`: package for statistical inference
+    - `openintro`, `babynames`, `nycflights13`: packages with useful datasets
+
+---
+
+# R Packages
+
+.center[
+&lt;img src="package-install.png" width="50%" /&gt;
+]
+
+**Note**: Once you install a package, *you never have to again*!
+
+- But, you have to *load* them every time you open R Studio. 
+- To load a package, use the `library` function. Run the following:
+
+```r
+library(tidyverse)
+library(nycflights13)
+```
+
+---
+
+# `nycflights13` Package
+
+This package contains five data sets saved in five separate **data frames** with information about all domestic flights departing from New York City in 2013:
+
+1. `flights`: Information on all 336,776 flights
+2. `airlines`: A table matching airline names and their two letter IATA airline codes (also known as carrier codes) for 16 airline companies
+3. `planes`: Information about each of 3,322 physical aircrafts used.
+4. `weather`: Hourly meteorological data for each of the three NYC airports. 
+5. `airports`: Airport names, codes, and locations for 1,458 destination airports.
+
+- 
+
+**Note**: *Data frames* and *tibbles* are analogous to rectangular spreadhseets you would see in Excel or Google Spreadsheets. 
+
+- Ideally, rows of a data frame correspond to unique *observations*, and columns correspond to *variables*.
+
+---
+
+# `flights` Data Frame
+
+Run the following:
+
+
+
+
+```r
+flights
+```
+
+```
+# A tibble: 336,776 × 19
+    year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time
+   &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;
+ 1  2013     1     1      517            515         2      830            819
+ 2  2013     1     1      533            529         4      850            830
+ 3  2013     1     1      542            540         2      923            850
+ 4  2013     1     1      544            545        -1     1004           1022
+ 5  2013     1     1      554            600        -6      812            837
+ 6  2013     1     1      554            558        -4      740            728
+ 7  2013     1     1      555            600        -5      913            854
+ 8  2013     1     1      557            600        -3      709            723
+ 9  2013     1     1      557            600        -3      838            846
+10  2013     1     1      558            600        -2      753            745
+# … with 336,766 more rows, and 11 more variables: arr_delay &lt;dbl&gt;,
+#   carrier &lt;chr&gt;, flight &lt;int&gt;, tailnum &lt;chr&gt;, origin &lt;chr&gt;, dest &lt;chr&gt;,
+#   air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;
+```
+
+---
+
+# `flights` Data Frame
+
+A few notes on this dataset...
+
+- A "tibble" is a type of data frame in R. The `flights` data frame has:
+    - 336,776 **rows**
+    - 19 **columns**
+    
+- The 19 columns correspond to 19 different **variables**. Some of which are: *year*, *month*, *departure time*, *arrival time*, *carrier*, *origin*, etc.
+
+- By default, we are shown the first 10 rows, since the rest can't fit on the screen. 
+
+---
+
+# Exploring Data Frames
+
+There are many ways to explore a data frame besides what we just accomplished. One of which is through the `View` function. 
+- Run the following:
+
+```r
+View(flights)
+```
+
+- **Note**: R is *case sensitive*. So make sure you use an uppercase "V" in `View`, rather than `view`. 
+
+---
+
+# Exploring Variables
+
+The `$` operator allows us to explore a single variable within a data frame. For example, run the following in your console:
+
+```r
+airlines
+```
+
+
+```r
+airlines$name
+```
+
+
+```r
+airlines$carrier
+```
+
+- The `$` extracts only the `name` variable from the `airlines` data frame and returns it as a **vector**. 
+
+---
+
+# Help Files
+
+You can get help in R by entering a `?` before the name of a function or data frame, and a page will appear in the bottom-right panel. 
+- Try the following:
+
+```r
+?flights
+```
+
+
+```r
+?mean
+```
+
+I use the help files **all the time**, and you should too, especially if you're stuck with a specific function!
+
+---
+
+# What's to come?
+
+.center[
+&lt;img src="moderndive-flow.png" width="75%" /&gt;
+]
+
+
+
+    </textarea>
+<style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
+<script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
+<script>var slideshow = remark.create({
+"countIncrementalSlides": false,
+"highlightLines": true
+});
+if (window.HTMLWidgets) slideshow.on('afterShowSlide', function (slide) {
+  window.dispatchEvent(new Event('resize'));
+});
+(function(d) {
+  var s = d.createElement("style"), r = d.querySelector(".remark-slide-scaler");
+  if (!r) return;
+  s.type = "text/css"; s.innerHTML = "@page {size: " + r.style.width + " " + r.style.height +"; }";
+  d.head.appendChild(s);
+})(document);
+
+(function(d) {
+  var el = d.getElementsByClassName("remark-slides-area");
+  if (!el) return;
+  var slide, slides = slideshow.getSlides(), els = el[0].children;
+  for (var i = 1; i < slides.length; i++) {
+    slide = slides[i];
+    if (slide.properties.continued === "true" || slide.properties.count === "false") {
+      els[i - 1].className += ' has-continuation';
+    }
+  }
+  var s = d.createElement("style");
+  s.type = "text/css"; s.innerHTML = "@media print { .has-continuation { display: none; } }";
+  d.head.appendChild(s);
+})(document);
+// delete the temporary CSS (for displaying all slides initially) when the user
+// starts to view slides
+(function() {
+  var deleted = false;
+  slideshow.on('beforeShowSlide', function(slide) {
+    if (deleted) return;
+    var sheets = document.styleSheets, node;
+    for (var i = 0; i < sheets.length; i++) {
+      node = sheets[i].ownerNode;
+      if (node.dataset["target"] !== "print-only") continue;
+      node.parentNode.removeChild(node);
+    }
+    deleted = true;
+  });
+})();
+(function() {
+  "use strict"
+  // Replace <script> tags in slides area to make them executable
+  var scripts = document.querySelectorAll(
+    '.remark-slides-area .remark-slide-container script'
+  );
+  if (!scripts.length) return;
+  for (var i = 0; i < scripts.length; i++) {
+    var s = document.createElement('script');
+    var code = document.createTextNode(scripts[i].textContent);
+    s.appendChild(code);
+    var scriptAttrs = scripts[i].attributes;
+    for (var j = 0; j < scriptAttrs.length; j++) {
+      s.setAttribute(scriptAttrs[j].name, scriptAttrs[j].value);
+    }
+    scripts[i].parentElement.replaceChild(s, scripts[i]);
+  }
+})();
+(function() {
+  var links = document.getElementsByTagName('a');
+  for (var i = 0; i < links.length; i++) {
+    if (/^(https?:)?\/\//.test(links[i].getAttribute('href'))) {
+      links[i].target = '_blank';
+    }
+  }
+})();
+// adds .remark-code-has-line-highlighted class to <pre> parent elements
+// of code chunks containing highlighted lines with class .remark-code-line-highlighted
+(function(d) {
+  const hlines = d.querySelectorAll('.remark-code-line-highlighted');
+  const preParents = [];
+  const findPreParent = function(line, p = 0) {
+    if (p > 1) return null; // traverse up no further than grandparent
+    const el = line.parentElement;
+    return el.tagName === "PRE" ? el : findPreParent(el, ++p);
+  };
+
+  for (let line of hlines) {
+    let pre = findPreParent(line);
+    if (pre && !preParents.includes(pre)) preParents.push(pre);
+  }
+  preParents.forEach(p => p.classList.add("remark-code-has-line-highlighted"));
+})(document);</script>
+
+<script>
+slideshow._releaseMath = function(el) {
+  var i, text, code, codes = el.getElementsByTagName('code');
+  for (i = 0; i < codes.length;) {
+    code = codes[i];
+    if (code.parentNode.tagName !== 'PRE' && code.childElementCount === 0) {
+      text = code.textContent;
+      if (/^\\\((.|\s)+\\\)$/.test(text) || /^\\\[(.|\s)+\\\]$/.test(text) ||
+          /^\$\$(.|\s)+\$\$$/.test(text) ||
+          /^\\begin\{([^}]+)\}(.|\s)+\\end\{[^}]+\}$/.test(text)) {
+        code.outerHTML = code.innerHTML;  // remove <code></code>
+        continue;
+      }
+    }
+    i++;
+  }
+};
+slideshow._releaseMath(document);
+</script>
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+(function () {
+  var script = document.createElement('script');
+  script.type = 'text/javascript';
+  script.src  = 'https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML';
+  if (location.protocol !== 'file:' && /^https?:/.test(script.src))
+    script.src  = script.src.replace(/^https?:/, '');
+  document.getElementsByTagName('head')[0].appendChild(script);
+})();
+</script>
+  </body>
+</html>
