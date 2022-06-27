@@ -28,16 +28,6 @@ library(gapminder)
 ```
 
 
-# What have we done so far?
-
-**Data Exploration**
-
-```{r, comment = ""}
-library(nycflights13)
-flights
-```
-
----
 
 # What have we done so far?
 
@@ -109,7 +99,6 @@ knitr::include_graphics("dplyr_hex.png")
 ```{r, eval = FALSE}
 library(tidyverse) # Automatically loads ggplot2 and dplyr
 library(nycflights13)
-library(mdsr)
 library(gapminder)
 ```
 
@@ -190,43 +179,6 @@ You can even save "piped" operations as a new data frame. In fact, we have alrea
 jfk_nov = weather %>%
   filter(origin == "JFK" & month == 11)
 ```
-
----
-
-# `%>%` Intuition
-
-## My *morning routine*
-
-```{r, eval = FALSE}
-anthony %>%
-  wake_up(time = "7:30") %>%
-  get_out_of_bed() %>%
-  make_smoothie(ingredients = c("spinach", "raspberries", 
-                                "blueberries", "strawberries",
-                                "protein", "milk")) %>%
-  drink_coffee() %>%
-  boot_up_laptop(RStudio = TRUE, Zoom = TRUE, Spotify = TRUE)
-```
-
----
-
-# The Pipe Operator `%>%`
-
-**Keyboard "shortcut"**
-
-[control]+[shift]+[m]
-
-.pull-left[
-```{r, echo = FALSE}
-knitr::include_graphics("pipe.jpg")
-```
-]
-
-.pull-right[
-```{r, echo = FALSE}
-knitr::include_graphics("pipe_hex.jpg")
-```
-]
 
 ---
 
@@ -327,49 +279,6 @@ gapminder_new = gapminder %>%
 
 ---
 
-# `select()` and `filter()` together
-
-Similar to when using *only* `select()`, we might want to perform other operations on the data in conjunction with `filter()`. 
-
-- We can conveniently construct a single *pipeline* with all of the operations!
-
-```{r, eval = FALSE}
-gapminder_new = gapminder %>%
-  select(country, year, lifeExp) %>%
-  filter(country == "United States")
-```
-
---
-
-You can even add a plot at the end of a pipeline!
-
-```{r, eval = FALSE}
-gapminder %>%
-  select(country, year, lifeExp) %>%
-  filter(country == "United States") %>%
-  ggplot(aes(x = year, y = lifeExp)) + 
-  geom_line() + 
-  labs(x = "Year", y = "Life Expectancy", 
-       title = "US Life Expectancy")
-```
-
----
-
-# Non-pipeline equivalent
-
-Here is the equivalent code that does not use the `%>%` operator:
-
-```{r, eval = FALSE}
-gapminder_new = select(gapminder, country, year, lifeExp)
-gapminder_new = filter(gapminder_new, country == "United States")
-ggplot(gapminder_new, aes(x = year, y = lifeExp)) + 
-  geom_line() + 
-  labs(x = "Year", y = "Life Expectancy", 
-       title = "US Life Expectancy")
-```
-
----
-
 # Filtering on multiple criteria
 
 We are not limited to a single criterion when using `filter()`. 
@@ -390,36 +299,31 @@ The result of this pipeline is a data frame that includes data on *only* the cou
 
 ---
 
-# Practice
+# `arrange()` rows
 
-Using the `flights` dataset in the `nycflights13` package...
-
-1. Filter `flights` for all rows that:
-
-    - Departed from JFK (`origin == "JFK"`) airport **and**
-
-    - Were heading to Burlington, Vermont (`dest == "BTV"`) **or** Seattle, Washington (`dest == "SEA"`) **and**
-
-    - Departed in the months of October, November, or December.
-
-2. Select the destination, departure delay, arrival delay, and flight carrier variables from the data. 
-
-3. If you're feeling up to it, use the resulting data to make a **scatterplot** of arrival delay versus departure delay!
-
-```{r, eval = FALSE, echo = FALSE}
-flights_new = flights %>%
-  filter(origin == "JFK" &
-           dest %in% c("BTV", "SEA") & 
-           month %in% c(10, 11, 12)) %>%
-  select(dest, dep_delay, arr_delay, carrier)
-
-flights_new %>%
-  ggplot(aes(x = dep_delay, y = arr_delay)) + 
-  geom_point(alpha = 0.4) +
-  theme_bw() + 
-  labs(x = "Departure Delay (in mins)", y = "Arrival Delay (in mins)")
+```{r}
+gapminder %>%
+  arrange(year, country)
 ```
- 
+
+---
+
+# `arrange()` rows (in descending order)
+
+By default, `arrange()` will sort rows in **ascending order** (least to greatest, or *alphabetically*) based on the column(s) specified. 
+
+- To sort in **descending order**, use `desc()` around any of the variables specified in `arrange()`. 
+
+--
+
+Let's take *only data from 2007* and sort by the *largest to smallest* life expectancy:
+
+```{r, eval = FALSE}
+gapminder %>%
+  filter(year == 2007) %>%
+  arrange(desc(lifeExp)) 
+```
+
 ---
 
 # `mutate()` existing columns
@@ -431,39 +335,6 @@ flights_new %>%
 knitr::include_graphics("dplyr_mutate.png")
 ```
 ]
-
----
-
-# `mutate()` existing columns
-
-Suppose we wanted to recover each state's **total GDP**. 
-
-```{r}
-head(gapminder, 5)
-```
-
-The `gapminder` dataset has the `pop` and `gdpPercap` variables already, so we can *create* a new `gdp` variable by multiplying them together. 
-
----
-
-# `mutate()` existing columns
-
-Using `mutate()`, we can create a new variable called `gdp` by multiplying `pop` and `gdpPercap`:
-
-```{r, eval = FALSE}
-gapminder_new = gapminder %>%
-  mutate(gdp = pop*gdpPercap)
-```
-
---
-
-We could use `mutate()` along with `filter()` and `select()` to see how the total GDP has changed in the United States over the years:
-```{r, eval = FALSE}
-gapminder %>%
-  filter(country == "United States") %>%
-  mutate(gdp = pop*gdpPercap) %>%
-  select(country, year, gdp)
-```
 
 ---
 
@@ -499,20 +370,6 @@ Note that by calling this new data frame `weather`, we *overwrite* the existing 
 
 ---
 
-# `rename()`
-
-`rename()` is a relatively simple `dplyr` function that, you guessed it, *renames* existing variables. 
-
-Because we just created a variable named `temp_C`, let's *rename* the `temp` variable to `temp_F`:
-```{r}
-weather = weather %>%
-  rename(temp_F = temp)
-```
-
-- This *will* overwrite the `temp` column (unless you assign this pipeline to a name other than `weather`), but analyzing `temp.F` and `temp.C` is probably more straightforward. 
-
----
-
 # `arrange()` rows
 
 The `arrange()` function will *sort the rows* of a data frame by a pre-specified *column*. 
@@ -536,33 +393,6 @@ head(gapminder, 5)
 ```
 
 Suppose we instead would like to sort `gapminder` by *year*, followed by *country*. 
-
----
-
-# `arrange()` rows
-
-```{r}
-gapminder %>%
-  arrange(year, country)
-```
-
----
-
-# `arrange()` rows (in descending order)
-
-By default, `arrange()` will sort rows in **ascending order** (least to greatest, or *alphabetically*) based on the column(s) specified. 
-
-- To sort in **descending order**, use `desc()` around any of the variables specified in `arrange()`. 
-
---
-
-Let's take *only data from 2007* and sort by the *largest to smallest* life expectancy:
-
-```{r, eval = FALSE}
-gapminder %>%
-  filter(year == 2007) %>%
-  arrange(desc(lifeExp)) 
-```
 
 ---
 
@@ -598,8 +428,8 @@ The important step in `summarize()` is specifying **how** we want to reduce the 
 Using the `weather` data frame, let's calculate the **mean** and **standard deviation** of `temp_F`:
 ```{r}
 weather %>%
-  summarize(mean_temp_F = mean(temp_F, na.rm = TRUE), 
-            sd_temp_F = sd(temp_F, na.rm = TRUE))
+  summarize(mean_temp_F = mean(temp, na.rm = TRUE), 
+            sd_temp_F = sd(temp, na.rm = TRUE))
 ```
 
 --
@@ -658,8 +488,8 @@ Before running the code below, *what do you think it does*?
 weather_temp_month = weather %>%
   filter(origin == "JFK") %>% # Just focus on one NYC airport
   group_by(month) %>%
-  summarize(mean_temp_F = mean(temp_F, na.rm = TRUE), 
-            sd_temp_F = sd(temp_F, na.rm = TRUE))
+  summarize(mean_temp_F = mean(temp, na.rm = TRUE), 
+            sd_temp_F = sd(temp, na.rm = TRUE))
 weather_temp_month
 ```
 
@@ -676,8 +506,6 @@ Because **temperature** usually varies by *season*, or *month*, it makes sense t
 The code on the previous slide is *identical* to the code we used when introducing `summarize()`...
 
 - Except we added the first step `group_by(month)`, which does exactly what it sounds like: it **groups by** *month* before calculating summary statistics. 
-
---
 
 **Note**: We never use the `group_by()` operation by itself. We always combine it with a function that performs a calculation, such as `summarize()`. 
 

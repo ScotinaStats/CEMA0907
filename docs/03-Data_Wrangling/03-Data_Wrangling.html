@@ -23,36 +23,6 @@ class: center, middle, inverse, title-slide
 
 
 
-# What have we done so far?
-
-**Data Exploration**
-
-
-```r
-library(nycflights13)
-flights
-```
-
-```
-# A tibble: 336,776 × 19
-    year month   day dep_time sched_dep_time dep_delay arr_time sched_arr_time
-   &lt;int&gt; &lt;int&gt; &lt;int&gt;    &lt;int&gt;          &lt;int&gt;     &lt;dbl&gt;    &lt;int&gt;          &lt;int&gt;
- 1  2013     1     1      517            515         2      830            819
- 2  2013     1     1      533            529         4      850            830
- 3  2013     1     1      542            540         2      923            850
- 4  2013     1     1      544            545        -1     1004           1022
- 5  2013     1     1      554            600        -6      812            837
- 6  2013     1     1      554            558        -4      740            728
- 7  2013     1     1      555            600        -5      913            854
- 8  2013     1     1      557            600        -3      709            723
- 9  2013     1     1      557            600        -3      838            846
-10  2013     1     1      558            600        -2      753            745
-# … with 336,766 more rows, and 11 more variables: arr_delay &lt;dbl&gt;,
-#   carrier &lt;chr&gt;, flight &lt;int&gt;, tailnum &lt;chr&gt;, origin &lt;chr&gt;, dest &lt;chr&gt;,
-#   air_time &lt;dbl&gt;, distance &lt;dbl&gt;, hour &lt;dbl&gt;, minute &lt;dbl&gt;, time_hour &lt;dttm&gt;
-```
-
----
 
 # What have we done so far?
 
@@ -78,7 +48,7 @@ ggplot(flights_frontier, aes(x = dep_delay, y = arr_delay)) +
 
 **Data Visualization**
 
-&lt;img src="03-Data_Wrangling_files/figure-html/unnamed-chunk-4-1.png" width="60%" /&gt;
+&lt;img src="03-Data_Wrangling_files/figure-html/unnamed-chunk-3-1.png" width="60%" /&gt;
 
 ---
 
@@ -116,7 +86,6 @@ ggplot(flights_frontier, aes(x = dep_delay, y = arr_delay)) +
 ```r
 library(tidyverse) # Automatically loads ggplot2 and dplyr
 library(nycflights13)
-library(mdsr)
 library(gapminder)
 ```
 
@@ -208,40 +177,6 @@ You can even save "piped" operations as a new data frame. In fact, we have alrea
 jfk_nov = weather %&gt;%
   filter(origin == "JFK" &amp; month == 11)
 ```
-
----
-
-# `%&gt;%` Intuition
-
-## My *morning routine*
-
-
-```r
-anthony %&gt;%
-  wake_up(time = "7:30") %&gt;%
-  get_out_of_bed() %&gt;%
-  make_smoothie(ingredients = c("spinach", "raspberries", 
-                                "blueberries", "strawberries",
-                                "protein", "milk")) %&gt;%
-  drink_coffee() %&gt;%
-  boot_up_laptop(RStudio = TRUE, Zoom = TRUE, Spotify = TRUE)
-```
-
----
-
-# The Pipe Operator `%&gt;%`
-
-**Keyboard "shortcut"**
-
-[control]+[shift]+[m]
-
-.pull-left[
-&lt;img src="pipe.jpg" width="400" /&gt;
-]
-
-.pull-right[
-&lt;img src="pipe_hex.jpg" width="633" /&gt;
-]
 
 ---
 
@@ -341,52 +276,6 @@ gapminder_new = gapminder %&gt;%
 
 ---
 
-# `select()` and `filter()` together
-
-Similar to when using *only* `select()`, we might want to perform other operations on the data in conjunction with `filter()`. 
-
-- We can conveniently construct a single *pipeline* with all of the operations!
-
-
-```r
-gapminder_new = gapminder %&gt;%
-  select(country, year, lifeExp) %&gt;%
-  filter(country == "United States")
-```
-
---
-
-You can even add a plot at the end of a pipeline!
-
-
-```r
-gapminder %&gt;%
-  select(country, year, lifeExp) %&gt;%
-  filter(country == "United States") %&gt;%
-  ggplot(aes(x = year, y = lifeExp)) + 
-  geom_line() + 
-  labs(x = "Year", y = "Life Expectancy", 
-       title = "US Life Expectancy")
-```
-
----
-
-# Non-pipeline equivalent
-
-Here is the equivalent code that does not use the `%&gt;%` operator:
-
-
-```r
-gapminder_new = select(gapminder, country, year, lifeExp)
-gapminder_new = filter(gapminder_new, country == "United States")
-ggplot(gapminder_new, aes(x = year, y = lifeExp)) + 
-  geom_line() + 
-  labs(x = "Year", y = "Life Expectancy", 
-       title = "US Life Expectancy")
-```
-
----
-
 # Filtering on multiple criteria
 
 We are not limited to a single criterion when using `filter()`. 
@@ -405,168 +294,6 @@ The result of this pipeline is a data frame that includes data on *only* the cou
 --
 
 **Note**: We use the `%in%` to check for rows with `country` equal to *either* `"United States"` **or** `"Canada"`.
-
----
-
-# Practice
-
-Using the `flights` dataset in the `nycflights13` package...
-
-1. Filter `flights` for all rows that:
-
-    - Departed from JFK (`origin == "JFK"`) airport **and**
-
-    - Were heading to Burlington, Vermont (`dest == "BTV"`) **or** Seattle, Washington (`dest == "SEA"`) **and**
-
-    - Departed in the months of October, November, or December.
-
-2. Select the destination, departure delay, arrival delay, and flight carrier variables from the data. 
-
-3. If you're feeling up to it, use the resulting data to make a **scatterplot** of arrival delay versus departure delay!
-
-
- 
----
-
-# `mutate()` existing columns
-
-`mutate()` is a function that defines and inserts *new variables* into a data frame as *columns*. 
-
-.center[
-&lt;img src="dplyr_mutate.png" width="529" /&gt;
-]
-
----
-
-# `mutate()` existing columns
-
-Suppose we wanted to recover each state's **total GDP**. 
-
-
-```r
-head(gapminder, 5)
-```
-
-```
-## # A tibble: 5 × 6
-##   country     continent  year lifeExp      pop gdpPercap
-##   &lt;fct&gt;       &lt;fct&gt;     &lt;int&gt;   &lt;dbl&gt;    &lt;int&gt;     &lt;dbl&gt;
-## 1 Afghanistan Asia       1952    28.8  8425333      779.
-## 2 Afghanistan Asia       1957    30.3  9240934      821.
-## 3 Afghanistan Asia       1962    32.0 10267083      853.
-## 4 Afghanistan Asia       1967    34.0 11537966      836.
-## 5 Afghanistan Asia       1972    36.1 13079460      740.
-```
-
-The `gapminder` dataset has the `pop` and `gdpPercap` variables already, so we can *create* a new `gdp` variable by multiplying them together. 
-
----
-
-# `mutate()` existing columns
-
-Using `mutate()`, we can create a new variable called `gdp` by multiplying `pop` and `gdpPercap`:
-
-
-```r
-gapminder_new = gapminder %&gt;%
-  mutate(gdp = pop*gdpPercap)
-```
-
---
-
-We could use `mutate()` along with `filter()` and `select()` to see how the total GDP has changed in the United States over the years:
-
-```r
-gapminder %&gt;%
-  filter(country == "United States") %&gt;%
-  mutate(gdp = pop*gdpPercap) %&gt;%
-  select(country, year, gdp)
-```
-
----
-
-# `mutate()`
-
-In the `weather` data frame from the `nycflights13` package, the variable `temp` is temperature in **degrees Fahrenheit**. To convert this to **degrees Celcius**, we use the formula:
-
-`$$\text{temp in C}=\frac{\text{temp in F}-32}{1.8}$$`
-
---
-
-Using `mutate`, we can create the variable `temp_C` using the existing `temp`:
-
-```r
-weather = weather %&gt;%
-  mutate(temp_C = (temp - 32)/1.8)
-View(weather)
-```
-
----
-
-# `mutate()`
-
-
-```r
-weather = weather %&gt;%
-  mutate(temp_C = (temp - 32)/1.8)
-```
-
-Note that by calling this new data frame `weather`, we *overwrite* the existing one that comes with the `nycflights13` package. 
-
-- **Why?** We are not *losing* any information; only *adding* new information. 
-
-- The original `temp` variable is still part of the data frame. 
-
----
-
-# `rename()`
-
-`rename()` is a relatively simple `dplyr` function that, you guessed it, *renames* existing variables. 
-
-Because we just created a variable named `temp_C`, let's *rename* the `temp` variable to `temp_F`:
-
-```r
-weather = weather %&gt;%
-  rename(temp_F = temp)
-```
-
-- This *will* overwrite the `temp` column (unless you assign this pipeline to a name other than `weather`), but analyzing `temp.F` and `temp.C` is probably more straightforward. 
-
----
-
-# `arrange()` rows
-
-The `arrange()` function will *sort the rows* of a data frame by a pre-specified *column*. 
-
-.center[
-&lt;img src="dplyr_arrange.png" width="228" /&gt;
-]
-
-While we can do this as an *exploratory* step in the `View()` window, `arrange()` allows us to perform additional operations on a custom-sorted data frame. 
-
----
-
-# `arrange()` rows
-
-The `gapminder` data frame is currently arranged by *country*, followed by *year*. 
-
-
-```r
-head(gapminder, 5)
-```
-
-```
-## # A tibble: 5 × 6
-##   country     continent  year lifeExp      pop gdpPercap
-##   &lt;fct&gt;       &lt;fct&gt;     &lt;int&gt;   &lt;dbl&gt;    &lt;int&gt;     &lt;dbl&gt;
-## 1 Afghanistan Asia       1952    28.8  8425333      779.
-## 2 Afghanistan Asia       1957    30.3  9240934      821.
-## 3 Afghanistan Asia       1962    32.0 10267083      853.
-## 4 Afghanistan Asia       1967    34.0 11537966      836.
-## 5 Afghanistan Asia       1972    36.1 13079460      740.
-```
-
-Suppose we instead would like to sort `gapminder` by *year*, followed by *country*. 
 
 ---
 
@@ -616,6 +343,86 @@ gapminder %&gt;%
 
 ---
 
+# `mutate()` existing columns
+
+`mutate()` is a function that defines and inserts *new variables* into a data frame as *columns*. 
+
+.center[
+&lt;img src="dplyr_mutate.png" width="529" /&gt;
+]
+
+---
+
+# `mutate()`
+
+In the `weather` data frame from the `nycflights13` package, the variable `temp` is temperature in **degrees Fahrenheit**. To convert this to **degrees Celcius**, we use the formula:
+
+`$$\text{temp in C}=\frac{\text{temp in F}-32}{1.8}$$`
+
+--
+
+Using `mutate`, we can create the variable `temp_C` using the existing `temp`:
+
+```r
+weather = weather %&gt;%
+  mutate(temp_C = (temp - 32)/1.8)
+View(weather)
+```
+
+---
+
+# `mutate()`
+
+
+```r
+weather = weather %&gt;%
+  mutate(temp_C = (temp - 32)/1.8)
+```
+
+Note that by calling this new data frame `weather`, we *overwrite* the existing one that comes with the `nycflights13` package. 
+
+- **Why?** We are not *losing* any information; only *adding* new information. 
+
+- The original `temp` variable is still part of the data frame. 
+
+---
+
+# `arrange()` rows
+
+The `arrange()` function will *sort the rows* of a data frame by a pre-specified *column*. 
+
+.center[
+&lt;img src="dplyr_arrange.png" width="228" /&gt;
+]
+
+While we can do this as an *exploratory* step in the `View()` window, `arrange()` allows us to perform additional operations on a custom-sorted data frame. 
+
+---
+
+# `arrange()` rows
+
+The `gapminder` data frame is currently arranged by *country*, followed by *year*. 
+
+
+```r
+head(gapminder, 5)
+```
+
+```
+## # A tibble: 5 × 6
+##   country     continent  year lifeExp      pop gdpPercap
+##   &lt;fct&gt;       &lt;fct&gt;     &lt;int&gt;   &lt;dbl&gt;    &lt;int&gt;     &lt;dbl&gt;
+## 1 Afghanistan Asia       1952    28.8  8425333      779.
+## 2 Afghanistan Asia       1957    30.3  9240934      821.
+## 3 Afghanistan Asia       1962    32.0 10267083      853.
+## 4 Afghanistan Asia       1967    34.0 11537966      836.
+## 5 Afghanistan Asia       1972    36.1 13079460      740.
+```
+
+Suppose we instead would like to sort `gapminder` by *year*, followed by *country*. 
+
+---
+
 # `summarize()` with `group_by()`
 
 The *verb-named functions* that we have looked at so far have all provided different ways to **manipulate** a data frame. 
@@ -647,8 +454,8 @@ Using the `weather` data frame, let's calculate the **mean** and **standard devi
 
 ```r
 weather %&gt;%
-  summarize(mean_temp_F = mean(temp_F, na.rm = TRUE), 
-            sd_temp_F = sd(temp_F, na.rm = TRUE))
+  summarize(mean_temp_F = mean(temp, na.rm = TRUE), 
+            sd_temp_F = sd(temp, na.rm = TRUE))
 ```
 
 ```
@@ -723,8 +530,8 @@ Before running the code below, *what do you think it does*?
 weather_temp_month = weather %&gt;%
   filter(origin == "JFK") %&gt;% # Just focus on one NYC airport
   group_by(month) %&gt;%
-  summarize(mean_temp_F = mean(temp_F, na.rm = TRUE), 
-            sd_temp_F = sd(temp_F, na.rm = TRUE))
+  summarize(mean_temp_F = mean(temp, na.rm = TRUE), 
+            sd_temp_F = sd(temp, na.rm = TRUE))
 weather_temp_month
 ```
 
@@ -741,8 +548,6 @@ Because **temperature** usually varies by *season*, or *month*, it makes sense t
 The code on the previous slide is *identical* to the code we used when introducing `summarize()`...
 
 - Except we added the first step `group_by(month)`, which does exactly what it sounds like: it **groups by** *month* before calculating summary statistics. 
-
---
 
 **Note**: We never use the `group_by()` operation by itself. We always combine it with a function that performs a calculation, such as `summarize()`. 
 
