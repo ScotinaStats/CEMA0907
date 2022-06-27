@@ -44,7 +44,6 @@ class: middle, center
 ```r
 library(tidyverse)
 library(nycflights13)
-library(gapminder)
 ```
 
 - If you don't have any of these packages, install them first!
@@ -1058,111 +1057,6 @@ ggplot(data = flights, mapping = aes(x = carrier, fill = origin)) +
 ```
 
 &lt;img src="02-Data_Visualization_files/figure-html/unnamed-chunk-43-1.png" width="45%" /&gt;
-
----
-
-# Multiple Categorical Variables
-
-Suppose we want to make different-colored bars for different airports (`origin`). 
-
-```r
-ggplot(data = flights, mapping = aes(x = carrier, fill = origin)) + 
-  geom_bar()
-```
-
-(The `fill` aesthetic corresponds to the color to **fill** the bars!)
-
----
-
-# Summary: Building plots in layers
-
-
-```r
-ggplot(data = mtcars, mapping = aes(x = wt, y = mpg)) 
-```
-
-&lt;img src="02-Data_Visualization_files/figure-html/unnamed-chunk-45-1.png" width="50%" /&gt;
-
----
-
-# Summary: Building plots in layers
-
-
-```r
-ggplot(data = mtcars, mapping = aes(x = wt, y = mpg))  + 
-  geom_point()
-```
-
-&lt;img src="02-Data_Visualization_files/figure-html/unnamed-chunk-46-1.png" width="50%" /&gt;
-
----
-
-# Summary: Building plots in layers
-
-
-```r
-ggplot(data = mtcars, mapping = aes(x = wt, y = mpg))  + 
-  geom_point(aes(color = factor(cyl)))
-```
-
-&lt;img src="02-Data_Visualization_files/figure-html/unnamed-chunk-47-1.png" width="50%" /&gt;
-
----
-
-# Summary: Building plots in layers
-
-
-```r
-ggplot(data = mtcars, mapping = aes(x = wt, y = mpg))  + 
-  geom_point(aes(color = factor(cyl))) + 
-  geom_smooth()
-```
-
-&lt;img src="02-Data_Visualization_files/figure-html/unnamed-chunk-48-1.png" width="50%" /&gt;
-
----
-
-# Summary: Building plots in layers
-
-
-```r
-ggplot(data = mtcars, mapping = aes(x = wt, y = mpg))  + 
-  geom_point(aes(color = factor(cyl))) + 
-  geom_smooth(se = FALSE, aes(color = factor(cyl)))
-```
-
-&lt;img src="02-Data_Visualization_files/figure-html/unnamed-chunk-49-1.png" width="50%" /&gt;
-
----
-
-# Summary: Building plots in layers
-
-
-```r
-ggplot(data = mtcars, mapping = aes(x = wt, y = mpg))  + 
-  geom_point(aes(color = factor(cyl))) + 
-  geom_smooth(se = FALSE, aes(color = factor(cyl))) + 
-  labs(x="Weight (lb/1000)", y = "Miles/(US) gallon", color = "Cylinders") + 
-  theme_classic()
-```
-
-&lt;img src="02-Data_Visualization_files/figure-html/unnamed-chunk-50-1.png" width="45%" /&gt;
-
----
-
-# Summary
-
-.center[
-&lt;img src="summary_5ng.png" width="70%" /&gt;
-]
-
-
-
-
-
-
-
-
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
