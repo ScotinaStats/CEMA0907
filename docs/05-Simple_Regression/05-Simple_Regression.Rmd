@@ -146,35 +146,11 @@ house_prices %>%
 # Data Visualization
 
 Because `price` and `bedrooms` are both **numerical**, a **scatterplot** would be useful in visualizing their relationship. 
-```{r, out.width = "40%"}
+```{r, out.width = "40%", warning = FALSE, message = FALSE}
 ggplot(data = house_prices, aes(x = bedrooms, y = price)) + 
   geom_point() + 
   geom_smooth(method = "lm", se = FALSE) + 
   labs(x = "Bedrooms per home", y = "Price (in $)")
-```
-
----
-
-# OPTIONAL: Removing Scientific Notation on y-axis
-
-```{r, out.width = "40%"}
-ggplot(data = house_prices, aes(x = bedrooms, y = price)) + 
-  geom_point() + 
-  geom_smooth(method = "lm", se = FALSE) + 
-  labs(x = "Bedrooms per home", y = "Price (in $)") + 
-  scale_y_continuous(labels = scales::comma) #<<
-```
-
----
-
-# OPTIONAL: Changing y-axis scale to dollars
-
-```{r, out.width = "40%"}
-ggplot(data = house_prices, aes(x = bedrooms, y = price)) + 
-  geom_point() + 
-  geom_smooth(method = "lm", se = FALSE) + 
-  labs(x = "Bedrooms per home", y = "Price") + 
-  scale_y_continuous(labels = scales::dollar) #<<
 ```
 
 ---
@@ -211,18 +187,6 @@ ggplot(data = house_prices, aes(x = bedrooms, y = price)) + #<<
 class: center, middle
 
 # Simple Linear Regression
-
----
-
-# The Linear Model
-
-The points in a scatterplot usually don't line up perfectly. 
-
-- Perfect correlations of +1 or -1 never happen. 
-
-Using a scatterplot with two strongly correlated variables, you can easily sketch a straight line that summarizes the data pretty well.
-
-A **linear model** gives an equation of a straight line through the data. 
 
 ---
 
@@ -323,7 +287,7 @@ $$\hat{y}=b_{0}+b_{1}\cdot x$$
 # Regression Coefficients
 
 .pull-left[
-```{r, echo = FALSE}
+```{r, echo = FALSE, message = FALSE, warning = FALSE}
 ggplot(data = house_prices, aes(x = bedrooms, y = price)) + #<<
   geom_point() + 
   geom_smooth(method = "lm", se = FALSE) + 
@@ -349,19 +313,6 @@ But what are the *specific values* of the regression coefficients, $b_{0}$ and $
 lm_house = lm(price ~ bedrooms, data = house_prices)
 get_regression_table(lm_house)
 ```
-
----
-
-# Regression Coefficients
-
-```{r, eval = FALSE}
-lm_house = lm(price ~ bedrooms, data = house_prices)
-get_regression_table(lm_house)
-```
-
-In R, `lm()` stands for **L**inear **M**odel. 
-
-- The `get_regression_table()` function in the `moderndive` package gives the estimated **coefficients** (under the `estimate` column), along with other important information. 
 
 ---
 
@@ -404,16 +355,6 @@ For example, let's predict the *price* of a home with *three bedrooms*: $$\wideh
 --
 
 The **linear model** predicts that a house with *three bedrooms* will cost <span>&#36;</span>492,960. 
-
----
-
-# Practice
-
-Conduct a linear regression analysis of `price` (*y*) against `sqft_living` (*x*).
-
-- What does this tell you about the relationship between living space (in ft sq) and price per home?
-
----
 
 ---
 
@@ -466,21 +407,11 @@ house_prices %>%
 
 # Data Visualization
 
+Because the *x* variable is **categorical**, a *boxplot* might be a useful visualization. 
+
 ```{r, out.width = "45%"}
 ggplot(data = house_prices, aes(x = waterfront, y = price)) + 
-  geom_jitter() + 
-  geom_smooth(method = "lm", se = FALSE) + 
-  labs(x = "Waterfront home?", y = "Price (in $)") 
-```
-
----
-
-# A (Better) Data Visualization
-
-Because the *x* variable is **categorical**, a *boxplot* might be a better visualization. 
-```{r, out.width = "45%"}
-ggplot(data = house_prices, aes(x = waterfront, y = price)) + 
-  geom_boxplot() + #<<
+  geom_boxplot() + 
   labs(x = "Waterfront home?", y = "Price (in $)") 
 ```
 
@@ -522,28 +453,6 @@ Because the `waterfront` variable takes *two levels* (`TRUE` and `FALSE`), the *
 
 # Back to Summary Statistics
 
-.pull-left[
-```{r, echo = FALSE}
-knitr::kable(data.frame(Waterfront = c("TRUE", "FALSE"), 
-                        Mean = c("$0.53 mil", "$1.66 mil")), 
-             format = "html", align = "c")
-```
-]
-
-.pull-right[
-```{r, echo = FALSE}
-ggplot(house_prices, aes(x = waterfront, y = price, fill = waterfront)) + 
-  geom_bar(stat = "summary", fun.y = "mean") + 
-  labs(x = "Waterfront?", y = "Average Price (in $)") + 
-  theme_bw() + 
-  theme(legend.position = "none")
-```
-]
-
----
-
-# Back to Summary Statistics
-
 ```{r}
 lm_waterfront = lm(price ~ waterfront, data = house_prices)
 get_regression_table(lm_waterfront)
@@ -556,106 +465,6 @@ house_prices %>%
 ```
 
 **We knew the regression coefficients the whole time!!!**
-
----
-
-class: center, middle
-
-# Correlation is not Causation!
-
----
-
-# Let me repeat...
-
-**Correlation is not causation!!!**
-
----
-
-# Some Examples
-
-.center[
-```{r, echo = FALSE, out.width = "75%"}
-knitr::include_graphics("choc_nobel.jpg")
-```
-]
-
----
-
-# Some Examples
-
-.pull-left[
-Number of people who drowned by falling into a pool vs **Films in which Nicolas Cage appeared** (*correlation = 0.67*)
-]
-
-.pull-right[
-```{r, echo = FALSE}
-knitr::include_graphics("cage.jpg")
-```
-]
-
----
-
-# Lurking Variables
-
-**Are there other variables that could be responsible for this association?**
-- temperature?
-- number of pools bought in a year (i.e., to swim outside and avoid watching Nicolas Cage movies)?
-- average yearly salary (for upperclass or otherwise)?
-
---
-
-All of these variables are (possible) examples of *lurking variables*. 
-- A **lurking variable** is a variable that has an important effect on the relationship of variables in a study, but is not included among the variables being studied. 
-
----
-
-# Doctors and Life Expectancy
-```{r, echo = F}
-Doctors <- read.csv("~/Dropbox/Teaching/03-Simmons Courses/STAT118-Introductory Statistics/DVB Data/Doctors_and_life_expectancy.csv")
-```
-```{r, echo = F, out.width = "60%", message = FALSE, warning = FALSE}
-ggplot(Doctors, aes(x = sqrtDoctors.person, y = life.exp)) + 
-  geom_point() + 
-  geom_smooth(method = "lm", se = FALSE) + 
-  labs(x = "sqrt(Doctors per person)", y = "Life Expectancy")
-```
-
----
-
-# TVs and Life Expectancy
-```{r, echo = FALSE, out.width = "60%", message = FALSE, warning = FALSE}
-ggplot(Doctors, aes(x = sqrtTV.person, y = life.exp)) + 
-  geom_point() + 
-  geom_smooth(method = "lm", se = FALSE) + 
-  labs(x = "sqrt(TVs per person)", y = "Life Expectancy")
-```
-
----
-
-# TVs and Doctors
-```{r, echo = F, out.width = "60%", message = FALSE, warning = FALSE}
-ggplot(Doctors, aes(x = sqrtTV.person, y = sqrtDoctors.person)) + 
-  geom_point() + 
-  geom_smooth(method = "lm", se = FALSE) + 
-  labs(x = "sqrt(TVs per person)", y = "sqrt(Doctors per person)")
-```
-
----
-
-# What does this mean?
-**In order to increase life expectancy, watch TV!**
-
-- It's possible that doctors (or even TV!) could *cause* a country's average life expectancy to increase. 
-- A simple linear regression of *x* versus *y* is *not enough* to prove causation. 
-
---
-
-**What's next?**
-
-Multiple linear regression!
-
-
-
 
 
 
