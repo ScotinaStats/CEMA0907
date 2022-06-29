@@ -61,8 +61,6 @@ One family of verbs that we will use to work with multiple tables is called **mu
 (ii) `full_join()`
 
 (iii) `left_join()` and `right_join()`
-
-(iv) `anti_join()`
     
 ---
 
@@ -399,38 +397,6 @@ nrow(flightsJoinedFull)
 This included *all* of the airports that did not appear in `flights`. 
 
 - Since these airports were *not* destinations from NYC in 2013, their flight information includes `NA` values. 
-
----
-
-# `anti_join()`
-
-To be honest, I haven't used this one very much...it's basically the *opposite* of `inner_join()`. 
-
-- `anti_join()` returns all rows from one table **without** a match in the other table. 
-
-
-```r
-flightsJoinedAnti = flights %&gt;%
-  anti_join(airports, by = c("dest" = "faa"))
-
-nrow(flights)
-```
-
-```
-## [1] 336776
-```
-
-```r
-nrow(flightsJoinedAnti)
-```
-
-```
-## [1] 7602
-```
-
---
-
-In `flightsJoinedAnti`, the **only rows kept** are the ones that have values of `dest` that do **NOT** appear in `airports`. 
 
 ---
 
