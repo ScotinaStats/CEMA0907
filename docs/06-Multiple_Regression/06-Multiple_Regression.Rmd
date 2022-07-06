@@ -387,21 +387,6 @@ In other words, we will fit the model: $$\widehat{price} = b_{0}+b_{1}(bedrooms)
 
 ---
 
-# Correlation Matrix
-
-Because we have several **numerical** variables, we can calculate several pairwise **correlation coefficients**. 
-- (Recall that one cannot calculate a correlation coefficient with categorical variables.)
-
-While we could do this with `cor()` several times depending on the number of comparisons, it is much more efficient to construct a **correlation matrix**:
-
-```{r}
-house_prices %>%
-  select(price, bedrooms, sqft_living) %>%
-  cor()
-```
-
----
-
 # Fitting the Model
 
 To fit a model of this form in R, we use `lm()` exactly as we did in previous examples:
