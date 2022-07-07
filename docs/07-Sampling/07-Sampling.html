@@ -25,12 +25,6 @@ class: center, middle, inverse, title-slide
 
 
 
-class: center, middle
-
-# Computer Simulation
-
----
-
 # Needed Packages 
 
 
@@ -195,13 +189,9 @@ Using `View(virtual_prop_red)`, we see that there are now *30 columns*: each col
 
 # Practice
 
-Construct a **histogram** of your 30 `prop_red` values in `virtual_prop_red`. 
+Let's construct a **histogram** of the 30 `prop_red` values in `virtual_prop_red`. 
  
 - What do you notice about the **distribution**?
-
---
-
-**Solution**
 
 
 ```r
@@ -302,20 +292,6 @@ The sample statistics in this case are **sample proportions**, `\(\hat{p}\)`.
 - In each sample, `\(\hat{p}\)` is the proportion of balls that are red. 
 
 - We took *many* samples, so we were able to plot a histogram of the *many* `\(\hat{p}\)`. 
-
----
-
-# Some Final Observations
-
-What do we observe about the relationship between **sample size** and the **number of samples/replicates**?
-
-- As the sample size increases, the **spread** of `\(\hat{p}\)` across the 1,000 replicates decreases. 
-    - Less differences in `prop_red` due to **sampling variation**, and the distribution is centered more tightly around the same value (~0.35-0.40). 
-
---
-
-- Let's go one step further. Using 1,000 replicates, calculate the **mean** and **standard deviation** of `\(\hat{p}\)` using `favstats` for varying sample sizes: 10, 50, 100. 
-- Use the code for `\(n=10\)` on the next slide to get started!
 
 ---
 
@@ -627,12 +603,6 @@ A certain *theorem* states that, as the sample size gets *larger*...
 
 ---
 
-class: center, middle
-
-# Sampling Framework
-
----
-
 # Why do we sample? 
 
 In both the *virtual* simulations and in **real life**, our goal is the same:
@@ -648,32 +618,6 @@ Additionally, we discussed two key concepts:
 
 ---
 
-# Some Terminology
-
-**(Study) Population**: A collection of individuals or observations about which we are interested, with size usually denoted by `\(N\)`. 
-- In our virtual simulations, `\(N=2400\)`. 
-
-**Population Parameter**: A numerical summary quantity about the population that is **unknown**, but you wish you knew. 
-- If the population parameter is a **mean**, it is denoted by `\(\mu\)` ("mu"). 
-- If the population parameter is a **proportion**, it is denoted by `\(p\)`. 
-
-**Census**: An exhaustive enumeration or counting of all `\(N\)` individuals or observations in the population in order to compute the population parameter’s value exactly.
-- A census can be quite expensive in terms of time, energy, and money. 
-
----
-
-# Some Terminology
-
-**Sampling**: The act of collecting a sample from the population when we don’t have the means to perform a census, with size usually denoted by `\(n\)`. 
-
-**Sample Statistic**: A **summary statistic** computed from the **sample** that estimates the unknown population parameter. 
-- If the sample statistic is a **mean**, it is denoted by `\(\bar{x}\)` or `\(\bar{y}\)`. 
-- If the sample statistic is a **proportion**, it is denoted by `\(\hat{p}\)` ("p-hat")
-
-**Representative Sampling**: A sample is said be a representative sample if it is representative of the population.
-
----
-
 # Central Limit Theorem
 
 What we have illustrated throughout class today is one of the most important theorems in all of statistics. 
@@ -683,11 +627,7 @@ What we have illustrated throughout class today is one of the most important the
 Specifically, we can write the following: `$$\bar{x}\sim \text{Normal}\left(\mu, \frac{\sigma}{\sqrt{n}}\right)$$`
 and `$$\hat{p}\sim \text{Normal}\left(p, \sqrt{\frac{p(1-p)}{n}}\right)$$`
 
----
 
-# Notation Summary
-
-&lt;img src="notation-summary.png" width="2064" /&gt;
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
