@@ -61,7 +61,6 @@ How do we use a single sample to get some idea of how other samples might vary i
 
 
 ```r
-library(mosaic)
 library(moderndive)
 library(nycflights13)
 library(tidyverse)
@@ -100,8 +99,6 @@ pennies_sample
 # … with 40 more rows
 ```
 
---
-
 **Question**: What is the *average year* on US pennies in 2019?
 
 - Can we use the sample of 50 pennies to help answer this question?
@@ -110,19 +107,8 @@ pennies_sample
 
 # Exploratory Data Analysis: Data Visualization
 
-
-```r
-gf_histogram( ~ year, data = pennies_sample)
-```
-
-&lt;img src="08-Confidence_Intervals_files/figure-html/unnamed-chunk-4-1.png" width="50%" /&gt;
-
----
-
-# Exploratory Data Analysis: Data Visualization
-
 .pull-left[
-![](08-Confidence_Intervals_files/figure-html/unnamed-chunk-5-1.png)&lt;!-- --&gt;
+![](08-Confidence_Intervals_files/figure-html/unnamed-chunk-4-1.png)&lt;!-- --&gt;
 ]
 
 .pull-right[
@@ -138,26 +124,15 @@ Most of the ages are between 1980 and 2000, though there is a large spike in 201
 Because we are interested in the **mean** year of *all* US pennies in 2019, let's calculate the **sample mean**, `\(\bar{x}\)`, of our 50 pennies using `mean()`:
 
 ```r
-x_bar = mean( ~ year, data = pennies_sample)
+x_bar = mean(pennies_sample$year)
+x_bar
 ```
 
---
+```
+[1] 1995.44
+```
 
 Therefore, our **point estimate** is `\(\bar{x}=1995.44\)`. This represents our *best guess* at the **population mean** age of all US pennies, `\(\mu\)`. 
-
----
-
-# The Point Estimate
-
-The point estimate of `\(\bar{x}=1995.44\)` represents a single guess at `\(\mu\)`. But what if we'd like another guess?
-- For example, using the `bowl` data frame, we took *many samples* and calculated *many sample proportions*. 
-- Can we do that here?
-
---
-
-**No**, because we only have a single sample and *no population data*!
-
-- Luckily, **bootstrapping** allows us to use a *single sample* to generate many different samples that will act as our way of approximating a sampling distribution. 
 
 ---
 
@@ -166,11 +141,11 @@ The point estimate of `\(\bar{x}=1995.44\)` represents a single guess at `\(\mu\
 **Why are we interested in this?**
 
 *Every* **sample statistic** has some variability. 
-- Suppose you take a random sample of 50 Simmons University students and five are left-handed. 
+- Suppose you take a random sample of 50 Brown University students and five are left-handed. 
 
 --
 
-If you take a *different* random sample of 50 Simmons University students, how many would you *expect* to be left-handed?
+If you take a *different* random sample of 50 Brown University students, how many would you *expect* to be left-handed?
 - Suppose three are left-handed. Is that surprising?
 - Would 40 left-handed students out of 50 be surprising?
 
@@ -214,105 +189,6 @@ But this is **impossible**!
 
 ---
 
-# Practice
-
-Using your **bootstrap sample**, perform the following:
-- Construct a histogram of `year`. 
-- Calculate the sample mean of `year`. 
-
-*Hint*: These are identical calculations to the ones we performed earlier, we are just using the `bootstrap_sample1` data frame here instead of `pennies_sample`. 
-
----
-
-# Solution
-
-
-```r
-gf_histogram( ~ year, data = bootstrap_sample1)
-```
-
-&lt;img src="08-Confidence_Intervals_files/figure-html/unnamed-chunk-9-1.png" width="30%" /&gt;
-
-
-```r
-mean( ~ year, data = bootstrap_sample1)
-```
-
-```
-[1] 1995.18
-```
-
----
-
-# The Bootstrapping Process
-
-Suppose we have a **random sample** of `\(n=6\)` people. 
-
-.center[
-&lt;img src="original_sample.png" width="40%" /&gt;
-]
-
----
-
-# The Bootstrap Sample
-
-**Bootstrap sample**: Sample *with replacement* from the original sample, using the *same sample size*. 
-
-.center[
-&lt;img src="bootstrap_sample.png" width="80%" /&gt;
-]
-
----
-
-# Taking 6 Bootstrap Samples
-
-You are not limited to a single bootstrap sample. You will likely need *many bootstrap samples* to better understand the variation in pennies' ages between samples. 
-
-Let's take 6 bootstrap samples (using `reps = 6` in `rep_sample_n()`), construct histograms, and generate sample means (**bootstrap statistics**):
-
-
-```r
-six_bootstrap_samples =
-  rep_sample_n(pennies_sample, size = 50, reps = 6, replace = TRUE)
-```
-
----
-
-# Taking 6 Bootstrap Samples
-
-
-```r
-gf_histogram( ~ year, data = six_bootstrap_samples) + 
-  facet_wrap( ~ replicate)
-```
-
-&lt;img src="08-Confidence_Intervals_files/figure-html/unnamed-chunk-14-1.png" width="50%" /&gt;
-
-**Note**: We used the `facet_wrap( ~ replicate)` layer to create separate plots for each `replicate`. 
-
----
-
-# Taking 6 Bootstrap Samples
-
-
-```r
-mean(year ~ replicate, data = six_bootstrap_samples)
-```
-
-```
-      1       2       3       4       5       6 
-1996.50 1997.38 1995.44 1991.44 1993.76 1995.98 
-```
-
---
-
-Do you think 6 bootstrap samples is enough?
-- We *should* take many more samples, such as 1,000!
-
-Luckily there is a package made specifically to help with this kind of thing: `infer`
-
----
-
 class: center, middle, frame
 
 # The `infer` Package for Statistical Inference
@@ -328,75 +204,6 @@ There are several *verb-named functions* that build in order.
 .center[
 &lt;img src="infer_hex.png" width="30%" /&gt;
 ]
-
-**But first...**
-
----
-
-# The Pipe Operator `%&gt;%`
-
-Say you want to perform a set of operations on the `flights` data frame:
-
-1. Take `flights`, then...
-
---
-
-2. `filter` for *only* Jet Blue flights (carrier code "B6"), then...
-
---
-
-3. `group_by` departure airport (`origin`), then...
-
---
-
-4. `summarize` the *average flight distance* (`distance`) by departure airport. 
-
----
-
-# The Pipe Operator `%&gt;%`
-
-Say you want to perform a set of operations on the `flights` data frame:
-
-**Use the pipe operator!** (`%&gt;%`)
-
-
-```r
-flights %&gt;%
-  filter(carrier == "B6") %&gt;%
-  group_by(origin) %&gt;%
-  summarize(mean.distance = mean(distance))
-```
-
-```
-# A tibble: 3 × 2
-  origin mean.distance
-  &lt;chr&gt;          &lt;dbl&gt;
-1 EWR             815.
-2 JFK            1114.
-3 LGA            1030.
-```
-
-(Take STAT 228 this spring for more on `filter()`, `group_by()`, and `summarize()`!)
-
----
-
-# The Pipe Operator `%&gt;%`
-
-You would read this sequence as:
-
-1. Take `flights`, then...
-2. Use this output as the input to the next function, `filter`, then...
-3. Use this output as the input to the next function, `group_by`, then...
-4. Use this output as the input to the next function, `summarize`.
-
---
-
-**The starting value will always be the data frame!**
-
-- The sequence of functions that follow will consist of some combination of **verb-named functions** that we will discuss throughout class today. 
-- The result will the transformed/modified data frame that you want. For example, 
-    - A data frame consisting of only the subset of rows in flights corresponding to Jet Blue flights.
-    - A data frame consisting of average flight distance separated by origin. 
 
 ---
 
@@ -481,29 +288,7 @@ This generates a data frame with 1,000 rows: each row containing the sample mean
 visualize(bootstrap_distribution)
 ```
 
-&lt;img src="08-Confidence_Intervals_files/figure-html/unnamed-chunk-22-1.png" width="50%" /&gt;
-
----
-
-# Comparing `infer` with alternate R code
-
-
-```r
-# infer pipeline:
-pennies_sample %&gt;%
-  specify(response = year) %&gt;%
-  generate(reps = 1000, type = "bootstrap") %&gt;%            
-  calculate(stat = "mean") %&gt;%
-  visualize()
-```
-
-
-```r
-# Original workflow
-bootstrap_sample = rep_sample_n(pennies_sample, size = 50, reps = 1000, replace = TRUE)
-bootstrap_means = mean(year ~ replicate, data = bootstrap_sample)
-gf_histogram( ~ bootstrap_means)
-```
+&lt;img src="08-Confidence_Intervals_files/figure-html/unnamed-chunk-13-1.png" width="50%" /&gt;
 
 ---
 
@@ -681,7 +466,7 @@ mean(pennies_pop$year)
 ```
 
 ```
-[1] 1995.133
+[1] 1995.146
 ```
 
 --
@@ -710,7 +495,7 @@ bootstrap_distribution_new %&gt;%
 ## # A tibble: 1 × 2
 ##   lower_ci upper_ci
 ##      &lt;dbl&gt;    &lt;dbl&gt;
-## 1    1989.    1999.
+## 1    1992.    2001.
 ```
 
 This new confidence interval *also* contains `\(\mu\)` (1995). 
@@ -869,7 +654,7 @@ prop_red_50 = tally(color ~ replicate, format = "proportion",
 gf_histogram( ~ prop_red_50)
 ```
 
-&lt;img src="08-Confidence_Intervals_files/figure-html/unnamed-chunk-38-1.png" width="50%" /&gt;
+&lt;img src="08-Confidence_Intervals_files/figure-html/unnamed-chunk-27-1.png" width="50%" /&gt;
 
 ---
 
@@ -888,80 +673,26 @@ bootstrap_distribution = bowl_sample_1 %&gt;%
 gf_histogram( ~ stat, data = bootstrap_distribution)
 ```
 
-&lt;img src="08-Confidence_Intervals_files/figure-html/unnamed-chunk-40-1.png" width="40%" /&gt;
+&lt;img src="08-Confidence_Intervals_files/figure-html/unnamed-chunk-29-1.png" width="40%" /&gt;
             
 ---
 
 # Comparison
 
 .pull-left[
-![](08-Confidence_Intervals_files/figure-html/unnamed-chunk-41-1.png)&lt;!-- --&gt;
+![](08-Confidence_Intervals_files/figure-html/unnamed-chunk-30-1.png)&lt;!-- --&gt;
 
 (1,000 sample proportions)
 ]
 
 .pull-right[
-![](08-Confidence_Intervals_files/figure-html/unnamed-chunk-42-1.png)&lt;!-- --&gt;
+![](08-Confidence_Intervals_files/figure-html/unnamed-chunk-31-1.png)&lt;!-- --&gt;
 
 (1,000 bootstrap sample proportions)
 ]
 
----
-
-# What do we notice?
-
-The **center** of the bootstrap distribution is around ~0.4-0.45. 
-- This is because the bootstrap distribution is centered around the *sample proportion*, which is 0.4. 
-
-The **center** of the sampling distribution is around ~0.35-0.40. 
-- This is because the sampling distribution is centered around the *population proportion*, which is 0.375. 
-
---
-
-However, the **spread** is roughly *similar*. 
 
 
-```r
-sd( ~ prop_red_50)
-```
-
-```
-[1] 0.06954258
-```
-
-```r
-sd( ~ stat, data = bootstrap_distribution)
-```
-
-```
-[1] 0.06670388
-```
-
----
-
-# What do we notice?
-
-The bootstrap distribution will likely *not have the same center* as the sampling distribution, because we are resampling from the same sample over and over again. 
-
-- In other words, bootstrapping cannot improve the *quality* of an **estimate**.
-
-However even if the bootstrap distribution might not have the same center as the sampling distribution, it will likely have *very similar shape and spread*. 
-
-- In other words, bootstrapping will give you a *good estimate* of the **standard error**.
-
----
-
-# Summary
-
-The **bootstrap** is a powerful tool that is used to give an idea of how much a statistic *varies from sample to sample*. 
-
-- The **bootstrap distribution** of a sample statistic ( `\(\bar{x}\)`, `\(\hat{p}\)`, median, difference in means, etc.) is an *approximation* of the **sampling distribution**, and it is centered around the sample statistic. 
-
-We can use the bootstrap to calculate **confidence intervals**, which give a *range of plausible values* for the population parameter with some degree of confidence. 
-
-- The **percentile method** gives the 2.5th and 97.5th *percentiles* of the bootstrap distribution. 
-
-- The **standard error method** can also be used, but the variable must be *Normally distributed*. 
 
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
