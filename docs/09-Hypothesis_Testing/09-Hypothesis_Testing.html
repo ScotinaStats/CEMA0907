@@ -166,63 +166,6 @@ Therefore, *never* write "Accept `\(H_{0}\)`" when you mean "Fail to reject `\(H
 
 ---
 
-# Types of Errors
-
-Hypothesis tests *are not perfect*. Unfortunately, there exists the possibility of your conclusion being *incorrect*. 
-
---
-
-Similar to a criminal trial:
-- an *innocent* person is wrongly convicted (found guilty), or
-- a *guilty* person is wrongly set free (found not guilty)
-
----
-
-# Types of Errors
-
-Let's assume the following: 
-`$$H_{0}: \text{person is innocent},\ H_{a}: \text{person is guilty}$$`
-
-The two **errors** are:
-- Reject `\(H_{0}\)` when `\(H_{0}\)` is true (**Type I Error**)
-- Fail to reject `\(H_{0}\)` when `\(H_{0}\)` is false (**Type II Error**)
-
---
-
-When you use a *sample* to make inferences about a *population*, there is a chance that your inferences are incorrect!
-- With any procedure, there is a chance of Type I Error and a chance of Type II Error. 
-
----
-
-# Type I and Type II Errors
-
-.center[
-&lt;img src="decision_table.png" width="80%" /&gt;
-]
-
-Of course, we want a *small probability* of making an error!
-
---
-
-- The probability of Type I Error is denoted by `\(\alpha\)` ("alpha") and is called the **significance level** of the hypothesis test. 
-- The probability of Type II Error is denoted by `\(\beta\)` ("beta").
-
----
-
-# Significance Level
-
-We want `\(\alpha\)` and `\(\beta\)` as close to 0 as possible, because this would minimize our chance of making an error in our hypothesis test conclusions. 
-
-Usually, we set `\(\alpha\)` (the **significance level**) before the hypothesis test is conducted. 
-- We then judge the "evidence" against `\(\alpha\)`. 
-
---
-
-Common values of `\(\alpha\)` are `\(0.05\)`, `\(0.01\)`, and `\(0.10\)`. 
-- If we set `\(\alpha=0.05\)`, this means that we are using a procedure that, when used *over and over with different samples*, rejects a TRUE `\(H_{0}\)` 5% of the time. 
-
----
-
 # Statistical Significance
 
 The results from a hypothesis test are **statistically significant** if they are *more extreme* than what we would expect to see by random chance, **if the null hypothesis were true**. 
@@ -276,7 +219,7 @@ If Sarah were just guessing, we would *expect* the number of correct guesses to 
 
 --
 .center[
-&lt;img src="09-Hypothesis_Testing_files/figure-html/unnamed-chunk-9-1.png" width="45%" /&gt;
+&lt;img src="09-Hypothesis_Testing_files/figure-html/unnamed-chunk-8-1.png" width="45%" /&gt;
 ]
 
 ---
@@ -376,7 +319,7 @@ ggplot(data = movies_sample, mapping = aes(x = genre, y = rating)) +
   geom_boxplot()
 ```
 
-&lt;img src="09-Hypothesis_Testing_files/figure-html/unnamed-chunk-13-1.png" width="45%" /&gt;
+&lt;img src="09-Hypothesis_Testing_files/figure-html/unnamed-chunk-12-1.png" width="45%" /&gt;
 
 ---
 
@@ -427,7 +370,7 @@ There is a more convenient way of calculating this in R, using the `infer` packa
 
 ```r
 obs_diff = movies_sample %&gt;% 
-* specify(formula = rating ~ genre) %&gt;%
+* specify(response = rating, explanatory = genre) %&gt;%
   calculate(stat = "diff in means", order = c("Romance", "Action"))
 obs_diff
 ```
@@ -468,7 +411,7 @@ This is the framework that `generate()` follows.
 
 ```r
 movies_sample %&gt;% 
-  specify(formula = rating ~ genre) %&gt;%
+  specify(response = rating, explanatory = genre) %&gt;%
   hypothesize(null = "independence") %&gt;% 
   generate(reps = 1) %&gt;% 
   calculate(stat = "diff in means", order = c("Romance", "Action"))
@@ -493,7 +436,7 @@ Null Hypothesis: independence
 
 ```r
 movies_sample %&gt;% 
-* specify(formula = rating ~ genre) %&gt;%
+* specify(response = rating, explanatory = genre) %&gt;%
 * hypothesize(null = "independence") %&gt;%
   generate(reps = 1) %&gt;% 
   calculate(stat = "diff in means", order = c("Romance", "Action"))
@@ -522,7 +465,7 @@ Null Hypothesis: independence
 
 ```r
 generated_samples = movies_sample %&gt;% 
-  specify(formula = rating ~ genre) %&gt;% 
+  specify(response = rating, explanatory = genre) %&gt;% 
   hypothesize(null = "independence") %&gt;% 
   generate(reps = 5000) %&gt;%
   calculate(stat = "diff in means", order = c("Romance", "Action"))
@@ -542,7 +485,7 @@ generated_samples %&gt;%
   visualize()
 ```
 
-&lt;img src="09-Hypothesis_Testing_files/figure-html/unnamed-chunk-22-1.png" width="50%" /&gt;
+&lt;img src="09-Hypothesis_Testing_files/figure-html/unnamed-chunk-21-1.png" width="50%" /&gt;
 
 ---
 
@@ -554,7 +497,7 @@ generated_samples %&gt;%
   visualize(obs_stat = 1.15)
 ```
 
-&lt;img src="09-Hypothesis_Testing_files/figure-html/unnamed-chunk-23-1.png" width="50%" /&gt;
+&lt;img src="09-Hypothesis_Testing_files/figure-html/unnamed-chunk-22-1.png" width="50%" /&gt;
 
 ---
 
@@ -581,14 +524,14 @@ generated_samples %&gt;%
   visualize(obs_stat = 1.15, direction = "both")
 ```
 
-&lt;img src="09-Hypothesis_Testing_files/figure-html/unnamed-chunk-24-1.png" width="40%" /&gt;
+&lt;img src="09-Hypothesis_Testing_files/figure-html/unnamed-chunk-23-1.png" width="40%" /&gt;
 
 ---
 
 # The p-value
 
 .pull-left[
-![](09-Hypothesis_Testing_files/figure-html/unnamed-chunk-25-1.png)&lt;!-- --&gt;
+![](09-Hypothesis_Testing_files/figure-html/unnamed-chunk-24-1.png)&lt;!-- --&gt;
 ]
 
 .pull-right[
@@ -602,7 +545,7 @@ Our *observed* **sample difference in means** was 1.15: On average, Romance movi
 # The p-value
 
 .pull-left[
-![](09-Hypothesis_Testing_files/figure-html/unnamed-chunk-26-1.png)&lt;!-- --&gt;
+![](09-Hypothesis_Testing_files/figure-html/unnamed-chunk-25-1.png)&lt;!-- --&gt;
 ]
 
 .pull-right[
@@ -651,7 +594,7 @@ Here is the pipeline we *can use* to obtain the **confidence interval**:
 
 ```r
 movies_sample %&gt;% 
-  specify(formula = rating ~ genre) %&gt;% 
+  specify(response = rating, explanatory = genre) %&gt;% 
   #hypothesize(null = "independence") %&gt;% 
   generate(reps = 5000) %&gt;%
   calculate(stat = "diff in means", order = c("Romance", "Action")) %&gt;% 
@@ -674,7 +617,7 @@ movies_sample %&gt;%
 
 ```r
 movies_sample %&gt;% 
-  specify(formula = rating ~ genre) %&gt;% 
+  specify(response = rating, explanatory = genre) %&gt;% 
   #hypothesize(null = "independence") %&gt;% 
   generate(reps = 5000) %&gt;%
   calculate(stat = "diff in means", order = c("Romance", "Action")) %&gt;% 
@@ -693,7 +636,7 @@ This is almost *identical* to the hypothesis test pipeline!
 
 ```r
 movies_sample %&gt;% 
-  specify(formula = rating ~ genre) %&gt;% 
+  specify(response = rating, explanatory = genre) %&gt;% 
   #hypothesize(null = "independence") %&gt;% 
   generate(reps = 5000) %&gt;%
   calculate(stat = "diff in means", order = c("Romance", "Action")) %&gt;% 
@@ -737,7 +680,7 @@ Instead of comparing movie rating between groups, let's compare the overall movi
 
 ```r
 movies_sample %&gt;% 
-* specify(formula = rating ~ NULL) %&gt;%
+* specify(response = rating) %&gt;%
 * hypothesize(null = "point", mu = 5) %&gt;%
   generate(reps = 1) %&gt;% 
   calculate(stat = "mean")
@@ -762,7 +705,7 @@ The **observed sample mean**:
 
 ```r
 x_bar = movies_sample %&gt;%
-  specify(formula = rating ~ NULL) %&gt;%
+  specify(response = rating) %&gt;%
   calculate(stat = "mean")
 x_bar
 ```
@@ -784,7 +727,7 @@ Response: rating (numeric)
 
 ```r
 movies_sample %&gt;% 
-  specify(formula = rating ~ NULL) %&gt;% 
+  specify(response = rating) %&gt;% 
   hypothesize(null = "point", mu = 5) %&gt;%  
   generate(reps = 5000) %&gt;% 
   calculate(stat = "mean") %&gt;%

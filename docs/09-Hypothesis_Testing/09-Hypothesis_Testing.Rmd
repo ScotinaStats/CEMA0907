@@ -158,65 +158,6 @@ Therefore, *never* write "Accept $H_{0}$" when you mean "Fail to reject $H_{0}$!
 
 ---
 
-# Types of Errors
-
-Hypothesis tests *are not perfect*. Unfortunately, there exists the possibility of your conclusion being *incorrect*. 
-
---
-
-Similar to a criminal trial:
-- an *innocent* person is wrongly convicted (found guilty), or
-- a *guilty* person is wrongly set free (found not guilty)
-
----
-
-# Types of Errors
-
-Let's assume the following: 
-$$H_{0}: \text{person is innocent},\ H_{a}: \text{person is guilty}$$
-
-The two **errors** are:
-- Reject $H_{0}$ when $H_{0}$ is true (**Type I Error**)
-- Fail to reject $H_{0}$ when $H_{0}$ is false (**Type II Error**)
-
---
-
-When you use a *sample* to make inferences about a *population*, there is a chance that your inferences are incorrect!
-- With any procedure, there is a chance of Type I Error and a chance of Type II Error. 
-
----
-
-# Type I and Type II Errors
-
-.center[
-```{r, echo = FALSE, out.width = "80%"}
-knitr::include_graphics("decision_table.png")
-```
-]
-
-Of course, we want a *small probability* of making an error!
-
---
-
-- The probability of Type I Error is denoted by $\alpha$ ("alpha") and is called the **significance level** of the hypothesis test. 
-- The probability of Type II Error is denoted by $\beta$ ("beta").
-
----
-
-# Significance Level
-
-We want $\alpha$ and $\beta$ as close to 0 as possible, because this would minimize our chance of making an error in our hypothesis test conclusions. 
-
-Usually, we set $\alpha$ (the **significance level**) before the hypothesis test is conducted. 
-- We then judge the "evidence" against $\alpha$. 
-
---
-
-Common values of $\alpha$ are $0.05$, $0.01$, and $0.10$. 
-- If we set $\alpha=0.05$, this means that we are using a procedure that, when used *over and over with different samples*, rejects a TRUE $H_{0}$ 5% of the time. 
-
----
-
 # Statistical Significance
 
 The results from a hypothesis test are **statistically significant** if they are *more extreme* than what we would expect to see by random chance, **if the null hypothesis were true**. 
@@ -405,7 +346,7 @@ Another way of writing the sample statistic in hypothesis testing is to call it 
 There is a more convenient way of calculating this in R, using the `infer` package:
 ```{r, comment = ""}
 obs_diff = movies_sample %>% 
-  specify(formula = rating ~ genre) %>% #<<
+  specify(response = rating, explanatory = genre) %>% #<<
   calculate(stat = "diff in means", order = c("Romance", "Action"))
 obs_diff
 ```
@@ -438,7 +379,7 @@ set.seed(12)
 
 ```{r, comment = "", message = FALSE}
 movies_sample %>% 
-  specify(formula = rating ~ genre) %>%
+  specify(response = rating, explanatory = genre) %>%
   hypothesize(null = "independence") %>% 
   generate(reps = 1) %>% 
   calculate(stat = "diff in means", order = c("Romance", "Action"))
@@ -454,7 +395,7 @@ set.seed(12)
 
 ```{r, comment = "", message = FALSE, warning = FALSE}
 movies_sample %>% 
-  specify(formula = rating ~ genre) %>% #<<
+  specify(response = rating, explanatory = genre) %>% #<<
   hypothesize(null = "independence") %>% #<<
   generate(reps = 1) %>% 
   calculate(stat = "diff in means", order = c("Romance", "Action"))
@@ -472,7 +413,7 @@ movies_sample %>%
 
 ```{r, message = FALSE, warning = FALSE}
 generated_samples = movies_sample %>% 
-  specify(formula = rating ~ genre) %>% 
+  specify(response = rating, explanatory = genre) %>% 
   hypothesize(null = "independence") %>% 
   generate(reps = 5000) %>%
   calculate(stat = "diff in means", order = c("Romance", "Action"))
@@ -581,10 +522,10 @@ summary_stats = movies_sample %>%
   group_by(genre) %>%
   summarize(mean = mean(rating), sd = sd(rating))
 obs_diff = movies_sample %>% 
-  specify(formula = rating ~ genre) %>% #<<
+  specify(response = rating, explanatory = genre) %>% #<<
   calculate(stat = "diff in means", order = c("Romance", "Action"))
 generated_samples = movies_sample %>% 
-  specify(formula = rating ~ genre) %>% 
+  specify(response = rating, explanatory = genre) %>% 
   hypothesize(null = "independence") %>% 
   generate(reps = 5000) %>%
   calculate(stat = "diff in means", order = c("Romance", "Action"))
@@ -606,7 +547,7 @@ set.seed(12)
 
 ```{r, message = FALSE, comment = ""}
 movies_sample %>% 
-  specify(formula = rating ~ genre) %>% 
+  specify(response = rating, explanatory = genre) %>% 
   #hypothesize(null = "independence") %>% 
   generate(reps = 5000) %>%
   calculate(stat = "diff in means", order = c("Romance", "Action")) %>% 
@@ -623,7 +564,7 @@ set.seed(12)
 
 ```{r, message = FALSE, eval = FALSE, comment = ""}
 movies_sample %>% 
-  specify(formula = rating ~ genre) %>% 
+  specify(response = rating, explanatory = genre) %>% 
   #hypothesize(null = "independence") %>% 
   generate(reps = 5000) %>%
   calculate(stat = "diff in means", order = c("Romance", "Action")) %>% 
@@ -643,7 +584,7 @@ set.seed(12)
 
 ```{r, message = FALSE, comment = ""}
 movies_sample %>% 
-  specify(formula = rating ~ genre) %>% 
+  specify(response = rating, explanatory = genre) %>% 
   #hypothesize(null = "independence") %>% 
   generate(reps = 5000) %>%
   calculate(stat = "diff in means", order = c("Romance", "Action")) %>% 
@@ -682,7 +623,7 @@ set.seed(12)
 
 ```{r, comment = "", message = FALSE, warning = FALSE}
 movies_sample %>% 
-  specify(formula = rating ~ NULL) %>% #<<
+  specify(response = rating) %>% #<<
   hypothesize(null = "point", mu = 5) %>%  #<<
   generate(reps = 1) %>% 
   calculate(stat = "mean")
@@ -697,7 +638,7 @@ movies_sample %>%
 The **observed sample mean**:
 ```{r, comment = ""}
 x_bar = movies_sample %>%
-  specify(formula = rating ~ NULL) %>%
+  specify(response = rating) %>%
   calculate(stat = "mean")
 x_bar
 ```
@@ -712,7 +653,7 @@ set.seed(12)
 
 ```{r, comment = "", message = FALSE, warning = FALSE}
 movies_sample %>% 
-  specify(formula = rating ~ NULL) %>% 
+  specify(response = rating) %>% 
   hypothesize(null = "point", mu = 5) %>%  
   generate(reps = 5000) %>% 
   calculate(stat = "mean") %>%
