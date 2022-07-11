@@ -62,7 +62,6 @@ How do we use a single sample to get some idea of how other samples might vary i
 
 ```r
 library(moderndive)
-library(nycflights13)
 library(tidyverse)
 library(infer)
 ```
@@ -177,15 +176,80 @@ bootstrap_sample1 =
 
 ---
 
-# Why bootstrap?
+# Bootstrapping
 
-Ideally, you are able to take thousands of samples from the same population and obtain an estimate (close to) an *exact* population parameter, and know exactly how much each sample **varies**. 
-- **Example**: Taking many samples of red and white balls from a bowl of 2,400 balls
+When using the bootstrap, it might help to think of our original sample *as if* it were the population. 
+
+- If the sample is *representative*, then the population might as well just be tons of copies of the original sample. 
 
 --
 
-But this is **impossible**!
-- So we *improvise* and copy our sample many times to **simulate** a population. 
+**Example**:
+
+Meet some "data":
+.center[
+&lt;img src="ac_beau.jpeg" width="80" /&gt;&lt;img src="ac_diva.jpeg" width="80" /&gt;&lt;img src="ac_rod.jpeg" width="79" /&gt;&lt;img src="ac_pango.jpeg" width="81" /&gt;&lt;img src="ac_goose.jpeg" width="80" /&gt;&lt;img src="ac_dora.jpeg" width="79" /&gt;
+]
+
+---
+
+# How Bootstrapping Works
+
+**One Sample** `\(\implies\)` *One Sample Statistic*
+
+.center[
+&lt;img src="bootstrap1.png" width="280" /&gt;
+]
+
+---
+
+# How Bootstrapping Works
+
+**One Sample** `\(\implies\)` **Bootstrap Sample** `\(\implies\)` *Bootstrap Statistic*
+
+.center[
+&lt;img src="bootstrap2.png" width="548" /&gt;
+]
+
+---
+
+# How Bootstrapping Works
+
+**One Sample** `\(\implies\)` **Bootstrap Samples** `\(\implies\)` *Bootstrap Statistics*
+
+.center[
+&lt;img src="bootstrap3.png" width="540" /&gt;
+]
+
+---
+
+# How Bootstrapping Works
+
+**One Sample** `\(\implies\)` **Many Bootstrap Samples** `\(\implies\)` *Many Bootstrap Statistics*
+
+.center[
+&lt;img src="bootstrap4.png" width="541" /&gt;
+]
+
+---
+
+# Why Bootstrapping Works
+
+If the sample is **representative**, the *population* might as well be *many copies of the sample*. 
+
+.center[
+&lt;img src="bootstrap5.png" width="502" /&gt;
+]
+
+---
+
+# Why Bootstrapping Works
+
+If the sample is **representative**, the *population* might as well be *many copies of the sample*. 
+
+.center[
+&lt;img src="bootstrap6.png" width="616" /&gt;
+]
 
 ---
 
@@ -288,7 +352,7 @@ This generates a data frame with 1,000 rows: each row containing the sample mean
 visualize(bootstrap_distribution)
 ```
 
-&lt;img src="08-Confidence_Intervals_files/figure-html/unnamed-chunk-13-1.png" width="50%" /&gt;
+&lt;img src="08-Confidence_Intervals_files/figure-html/unnamed-chunk-20-1.png" width="50%" /&gt;
 
 ---
 
@@ -654,7 +718,7 @@ prop_red_50 = tally(color ~ replicate, format = "proportion",
 gf_histogram( ~ prop_red_50)
 ```
 
-&lt;img src="08-Confidence_Intervals_files/figure-html/unnamed-chunk-27-1.png" width="50%" /&gt;
+&lt;img src="08-Confidence_Intervals_files/figure-html/unnamed-chunk-34-1.png" width="50%" /&gt;
 
 ---
 
@@ -673,20 +737,20 @@ bootstrap_distribution = bowl_sample_1 %&gt;%
 gf_histogram( ~ stat, data = bootstrap_distribution)
 ```
 
-&lt;img src="08-Confidence_Intervals_files/figure-html/unnamed-chunk-29-1.png" width="40%" /&gt;
+&lt;img src="08-Confidence_Intervals_files/figure-html/unnamed-chunk-36-1.png" width="40%" /&gt;
             
 ---
 
 # Comparison
 
 .pull-left[
-![](08-Confidence_Intervals_files/figure-html/unnamed-chunk-30-1.png)&lt;!-- --&gt;
+![](08-Confidence_Intervals_files/figure-html/unnamed-chunk-37-1.png)&lt;!-- --&gt;
 
 (1,000 sample proportions)
 ]
 
 .pull-right[
-![](08-Confidence_Intervals_files/figure-html/unnamed-chunk-31-1.png)&lt;!-- --&gt;
+![](08-Confidence_Intervals_files/figure-html/unnamed-chunk-38-1.png)&lt;!-- --&gt;
 
 (1,000 bootstrap sample proportions)
 ]

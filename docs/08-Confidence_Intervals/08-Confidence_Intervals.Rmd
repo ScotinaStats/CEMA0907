@@ -67,7 +67,6 @@ How do we use a single sample to get some idea of how other samples might vary i
 
 ```{r}
 library(moderndive)
-library(nycflights13)
 library(tidyverse)
 library(infer)
 ```
@@ -162,15 +161,99 @@ bootstrap_sample1 =
 
 ---
 
-# Why bootstrap?
+# Bootstrapping
 
-Ideally, you are able to take thousands of samples from the same population and obtain an estimate (close to) an *exact* population parameter, and know exactly how much each sample **varies**. 
-- **Example**: Taking many samples of red and white balls from a bowl of 2,400 balls
+When using the bootstrap, it might help to think of our original sample *as if* it were the population. 
+
+- If the sample is *representative*, then the population might as well just be tons of copies of the original sample. 
 
 --
 
-But this is **impossible**!
-- So we *improvise* and copy our sample many times to **simulate** a population. 
+**Example**:
+
+Meet some "data":
+.center[
+```{r, echo = FALSE, dpi = 300}
+knitr::include_graphics("ac_beau.jpeg")
+knitr::include_graphics("ac_diva.jpeg")
+knitr::include_graphics("ac_rod.jpeg")
+knitr::include_graphics("ac_pango.jpeg")
+knitr::include_graphics("ac_goose.jpeg")
+knitr::include_graphics("ac_dora.jpeg")
+```
+]
+
+---
+
+# How Bootstrapping Works
+
+**One Sample** $\implies$ *One Sample Statistic*
+
+.center[
+```{r, echo = FALSE, dpi = 300}
+knitr::include_graphics("bootstrap1.png")
+```
+]
+
+---
+
+# How Bootstrapping Works
+
+**One Sample** $\implies$ **Bootstrap Sample** $\implies$ *Bootstrap Statistic*
+
+.center[
+```{r, echo = FALSE, dpi = 300}
+knitr::include_graphics("bootstrap2.png")
+```
+]
+
+---
+
+# How Bootstrapping Works
+
+**One Sample** $\implies$ **Bootstrap Samples** $\implies$ *Bootstrap Statistics*
+
+.center[
+```{r, echo = FALSE, dpi = 300}
+knitr::include_graphics("bootstrap3.png")
+```
+]
+
+---
+
+# How Bootstrapping Works
+
+**One Sample** $\implies$ **Many Bootstrap Samples** $\implies$ *Many Bootstrap Statistics*
+
+.center[
+```{r, echo = FALSE, dpi = 300}
+knitr::include_graphics("bootstrap4.png")
+```
+]
+
+---
+
+# Why Bootstrapping Works
+
+If the sample is **representative**, the *population* might as well be *many copies of the sample*. 
+
+.center[
+```{r, echo = FALSE, dpi = 300}
+knitr::include_graphics("bootstrap5.png")
+```
+]
+
+---
+
+# Why Bootstrapping Works
+
+If the sample is **representative**, the *population* might as well be *many copies of the sample*. 
+
+.center[
+```{r, echo = FALSE, dpi = 300}
+knitr::include_graphics("bootstrap6.png")
+```
+]
 
 ---
 
