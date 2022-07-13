@@ -1,0 +1,370 @@
+---
+title: "CEMA 0907: Statistics in the Real World"
+subtitle: "Extra Topics"
+author: "Anthony Scotina"
+date: 
+output:
+  xaringan::moon_reader:
+    lib_dir: libs
+    css: my-theme.css
+    nature:
+      countIncrementalSlides: false
+      highlightLines: true
+---
+
+```{r xaringan-themer, include = FALSE}
+library(xaringanthemer)
+mono_accent(base_color = "#43418A")
+```
+
+# Needed Packages
+
+```{r, warning = FALSE, message = FALSE}
+library(tidyverse)
+library(tidytext) # Install this!
+```
+
+---
+
+class: center, middle, frame
+
+# Sentiment Analysis
+
+## (Anthony's Version)
+
+---
+
+# Sentiment Analysis
+
+Using *text mining techniques*, one piece of information we can extract from text is the **sentiment of the text**. 
+
+- Is the text positive or negative? Does it evoke *surprise* or *disgust*?
+
+- If we *sum* the sentiment for *each word in a document*, does this reflect an accurate measure of sentiment for the document as a whole?
+
+--
+
+There are a variety of ways to judge the **sentiment** of a text. 
+
+- One such *sentiment lexicon* is the `bing` lexicon from [Bing Liu and collaborators](https://www.cs.uic.edu/~liub/FBS/sentiment-analysis.html). 
+
+From `tidytext`:
+
+```{r, eval = FALSE}
+get_sentiments("bing")
+```
+
+---
+
+# Taylor Swift
+
+I would **Love** to tell a **Story** about the sentiment of Taylor Swift's songs. 
+
+From [TidyTuesday](https://github.com/rfordatascience/tidytuesday/blob/master/data/2020/2020-09-29/readme.md) via Rosie Baillie and Dr. Sara Stoudt:
+
+```{r}
+taylor_swift_lyrics <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-09-29/taylor_swift_lyrics.csv')
+```
+
+---
+
+# Tidy Text
+
+Let's use `unnest_tokens()` to convert the data to *tidy* format!
+
+- Each word will appear in its own row.
+
+```{r}
+tswift_tidy = taylor_swift_lyrics %>%
+  unnest_tokens(output = word, input = Lyrics)
+```
+
+--
+
+First, we'll want to *remove* **stop words**:
+
+```{r}
+head(stop_words) # 'stop_words' from 'tidytext' package
+```
+
+---
+
+# `anti_join()`
+
+Here's where we can use `anti_join()`!
+
+- *Remove* stop words from `tswift_tidy`. 
+
+```{r}
+tswift_tidy_anti = tswift_tidy %>%
+  anti_join(stop_words, by = "word")
+```
+
+---
+
+# Which words does T. Swift say the most?
+
+```{r, dpi = 300}
+tswift_tidy_anti %>%
+  count(word, sort = TRUE) %>% 
+  slice_max(n, n = 22) %>%
+  ggplot(aes(x = fct_reorder(word, n), y = n)) + 
+  geom_col() + 
+  labs(x = "", y = "Count", 
+       title = "Which words does Taylor Swift LOVE the most?") +
+  coord_flip() + 
+  theme_minimal()
+```
+
+---
+
+# Back to Sentiment Analysis
+
+The text is in **tidy format** (one word per row), so we can proceed with the **sentiment analysis**. 
+
+Let's **join** the `bing` lexicon to `tswift_tidy_anti`. 
+
+- We'll use `inner_join()`, because we want only the words that appear in **both** the song and the `bing` lexicon:
+
+```{r}
+song_sentiment = tswift_tidy_anti %>%
+  inner_join(get_sentiments("bing"), by = "word")
+```
+
+---
+
+# Taylor Swift Sentiment Analysis
+
+Next, we'll `count()` up the `word` and `sentiment` combinations, extract the **top 22** for each sentiment, and pass them off to `ggplot()` and `geom_col()`. 
+
+- I used `scales = "free_y"` in `facet_wrap()` so that each facet contained a different set of words (positive vs negative sentiments).
+
+```{r, eval = FALSE}
+sentiment_counts = song_sentiment %>%
+  count(word, sentiment, sort = TRUE)
+
+sentiment_counts %>%
+  group_by(sentiment) %>%
+  top_n(10, wt = n) %>%
+  ggplot(aes(x = fct_reorder(word, n), y = n, 
+             fill = sentiment)) + 
+  geom_col() + 
+  facet_wrap( ~ sentiment, scales = "free_y") + 
+  labs(x = "", y = "Contribution to sentiment", 
+       title = "Sentiment Analysis of Taylor Swift Songs") +
+  theme_bw() + 
+  theme(legend.position = "none") +
+  coord_flip()
+```
+
+---
+
+# Taylor Swift Sentiment Analysis
+
+.center[
+```{r, echo = FALSE, dpi = 300, out.width = "65%"}
+sentiment_counts = song_sentiment %>%
+  count(word, sentiment, sort = TRUE)
+
+sentiment_counts %>%
+  group_by(sentiment) %>%
+  top_n(10, wt = n) %>%
+  ggplot(aes(x = fct_reorder(word, n), y = n, 
+             fill = sentiment)) + 
+  geom_col() + 
+  facet_wrap( ~ sentiment, scales = "free_y") + 
+  labs(x = "", y = "Contribution to sentiment", 
+       title = "Sentiment Analysis of Taylor Swift Songs") +
+  theme_bw() + 
+  theme(legend.position = "none") +
+  coord_flip()
+```
+]
+
+---
+
+class: center, middle
+
+# Data Cleaning: Tips and Tricks
+
+## (Anthony's Favorite Things)
+
+---
+
+# Counting Observations per group
+
+```{r, message = FALSE, warning = FALSE}
+video_games <- read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-07-30/video_games.csv")
+```
+
+- `number`:	Game number
+- `game`: Game Title
+- `release_date`:	Release date
+- `price`: US Dollars + Cents
+- `owners`: Estimated number of people owning this game
+- `developer`: Group that developed the game
+- `publisher`: Group that published the game
+- `average_playtime`: Average playtime in minutes
+- `median_playtime`: Median playtime in minutes
+- `metascore`: Metascore rating
+
+**Question**: How would you count the number of games *per publisher*, and then *arrange* by count?
+
+---
+
+# Counting Observations per group
+
+Using some of `dplyr`'s data wrangling functions, we can do this in several lines:
+
+```{r, results = 'hide'}
+video_games %>%
+  group_by(publisher) %>%
+  summarize(N_games = n()) %>%
+  arrange(desc(N_games))
+```
+
+--
+
+This pipeline:
+
+1. **groups by** `publisher`, 
+
+2. **summarizes** the data by simply counting the *number of rows* (`n()`) per publisher, and 
+
+3. **arranges in descending order** by the newly-created `N_games`. 
+
+---
+
+# `count()`
+
+The `count()` function is one of my **favorites**!
+
+- `count()` simply *count* the number of observations **by group**. 
+
+```{r, eval = FALSE}
+video_games %>%
+  count(publisher)
+```
+
+- This returns a table with the groups and the number of observations per group. 
+
+---
+
+# `count()`
+
+If you want to `arrange` by `n` (the number of observations per group), you *could* use arrange...
+
+```{r, eval = FALSE}
+video_games %>%
+  count(publisher) %>%
+  arrange(desc(n))
+```
+
+---
+
+# `count()`
+
+You *could also* just use the `sort = TRUE` option in `count()` to sort in **descending order**:
+
+```{r}
+video_games %>%
+  count(publisher, sort = TRUE)
+```
+
+---
+
+# `case_when()`
+
+Are there more **resort** hotel reservations (compared to **city** hotel reservations) during the *summer* months?
+
+This dataset contains open data on **hotel booking demand** via [TidyTuesday](https://github.com/rfordatascience/tidytuesday/blob/master/data/2020/2020-02-11/readme.md). 
+
+```{r, warning = FALSE, message = FALSE}
+hotels <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-02-11/hotels.csv')
+```
+
+--
+
+**Two variables of interest**:
+
+- `hotel`: `city` or `resort`
+- `arrival_date_month`: the *month* (in words) of arrival
+
+---
+
+# `case_when()`
+
+From `?case_when`:
+
+> This function allows you to vectorise multiple `if_else()` statements. 
+
+--
+
+Let's create a new `season` variable:
+
+- If `arrival_date_month %in% c("December", "January", "February")`, then `season = "Winter"`
+
+- If `arrival_date_month %in% c("March", "April", "May")`, then `season = "Spring"`
+
+- If `arrival_date_month %in% c("June", "July", "August")`, then `season = "Summer"`
+
+- If `arrival_date_month %in% c("September", "October", "November")`, then `season = "Fall"`
+
+---
+
+# `case_when()`
+
+From `?case_when`:
+
+> This function allows you to vectorise multiple `if_else()` statements. 
+
+The general syntax within a `case_when()` statement is: 
+
+.center[
+case_when(`CONDITION1 ~ CATEGORY NAME IF CONDITION1 IS TRUE`, 
+`CONDITION1 ~ CATEGORY NAME IF CONDITION1 IS TRUE`
+]
+```{r, eval = FALSE}
+mutate(new_variable = 
+         case_when(`CONDITION1 ~ CATEGORY NAME IF CONDITION1 IS TRUE`, 
+                   `CONDITION2 ~ CATEGORY NAME IF CONDITION2 IS TRUE`, 
+                   ... )
+       )
+```
+
+---
+
+# `case_when()`
+
+From `?case_when`:
+
+> This function allows you to vectorise multiple `if_else()` statements. 
+
+Let's create a new `season` variable:
+
+```{r}
+hotels = hotels %>%
+  mutate(season = 
+           case_when(arrival_date_month %in% c("December", "January", "February") ~ "Winter", 
+                     arrival_date_month %in% c("March", "April", "May") ~ "Spring", 
+                     arrival_date_month %in% c("June", "July", "August") ~ "Summer", 
+                     arrival_date_month %in% c("September", "October", "November") ~ "Fall"))
+
+```
+
+---
+
+# Hotel Reservations (by season)
+
+Now let's make a bar graph using the new `season` variable!
+
+```{r, eval = FALSE}
+hotels %>%
+  ggplot(aes(x = season, fill = hotel)) + 
+  geom_bar(position = "dodge") + 
+  labs(x = "", y = "", fill = "",
+       title = "Hotel Reservations (by season)") + 
+  scale_y_continuous(labels = scales::comma) +
+  coord_flip() +
+  theme_minimal()
+```
