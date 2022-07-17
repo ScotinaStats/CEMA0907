@@ -455,24 +455,6 @@ There are other ways to create vectors that can be *much* more useful than enter
 
 ---
 
-# Vector Operations
-
-At its core, R is a big, *fancy* statistical calculator. 
-
-- While we can **add**, **subtract**, **multiply**, and **divide** numbers like you can in any calculator, we can also perform these operations (and more!) on vectors. 
-
-```{r}
-c(1, 2, 3, 4, 5) + c(6, 7, 8, 9, 10)
-```
-
-```{r}
-c(1, 2, 3, 4, 5) * c(6, 7, 8, 9, 10)
-```
-
-- 🚨 **Note**: Make sure vectors are the same *length* when doing this!
-
----
-
 # Assignment
 
 We can store vectors under an **alias** so we don't have to keep typing out `c()`, `seq()`, etc. 
@@ -558,32 +540,6 @@ moose_age != anthony_age
 
 ```{r}
 moose_age > anthony_age
-```
-
----
-
-# Combining Logicals
-
-We can combine *several* logical operators to check multiple conditions!
-
-- `&` for **and**, `|` for **or**
-
-The code below tests the following:
-
-> Moose's age is less than Anthony's age **and** Moose's age is less than 5. 
-
-```{r}
-(moose_age < anthony_age) & 
-  (moose_age < 5)
-```
-
---
-
-> Moose's age is less than Anthony's age **or** Anthony's age is less than 30. 
-
-```{r}
-(moose_age < anthony_age) | 
-  (anthony_age < 30)
 ```
 
 ---
