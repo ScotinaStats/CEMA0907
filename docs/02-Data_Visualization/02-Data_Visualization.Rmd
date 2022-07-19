@@ -24,12 +24,6 @@ library(infer)
 library(gapminder)
 ```
 
-class: middle, center
-
-# The Grammar of Graphics
-
----
-
 # (Good) Data Viz in R? 
 
 **ggplot2**
@@ -172,59 +166,6 @@ ggplot(data = mtcars, mapping = aes(x = wt, y = mpg))
 ggplot(data = mtcars, mapping = aes(x = wt, y = mpg)) + 
   geom_point()
 ```
-
----
-
-# Gapminder Data
-
-- Data on global economic, health, and development data from the website [gapminder.org](gapminder.org). 
-    - 142 countries represented, from 2007
-    
-```{r, echo = FALSE}
-gapminder_2007 = read.csv("~/Dropbox/Teaching/02-Brown Courses/CEMA0907-Statistics in the Real World/Data/gapminder_2007.csv")
-
-gapminder_2007
-```
-
----
-
-# Gapminder Data
-
-.pull-left[
-```{r, echo = FALSE}
-ggplot(data = gapminder_2007, aes(x = GDP.per.Capita, y = Life.Expectancy, size = Population, col = Continent)) + 
-  geom_point() + 
-  labs(x = "GDP per capita", y = "Life expectancy")
-```
-]
-
-.pull-right[
-- `data`?
-- `aes`thetic properties?
-- `geom_`?
-]
-
----
-
-# Gapminder Data
-
-.center[
-```{r, echo = FALSE}
-tab <- data.frame(data = c("GDP per Capita", "Life Expectancy", "Population", "Continent"), aes = c("x", "y", "size", "color"), geom = c("point", "point", "point", "point"))
-knitr::kable(tab, format = "html")
-```
-]
-
-Don't worry. We'll see plots that involve more than the "point" `geom`!
-- Examples: barplots, histograms, line graphs boxplots
-
---
-
-**Other components**
-- `facet`ing breaks up a plot into small multiples corresponding to the levels of another variable 
-- `position` adjustments for barplots
-- `labs`: labels for axes and title
-- themes
 
 ---
 
