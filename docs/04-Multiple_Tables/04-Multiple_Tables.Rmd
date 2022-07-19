@@ -82,79 +82,9 @@ knitr::include_graphics("relational_nycflights.png")
 
 ---
 
-# Why so many data frames?
-
-```{r}
-dim(flights)
-```
-
-```{r}
-head(airlines, 5)
-```
-
-Each row in `flights` is a *single flight*. 
-
-- One variable, `carrier` is an abbreviated carrier code for each of the 336,776 departing flights. 
-- It would be computationally inefficient to store the *complete airline name* in every row of `flights`. 
-
----
-
-# Why so many data frames?
-
-```{r}
-flights %>%
-  select(carrier, dep_delay, dest) %>%
-  slice(1:5)
-```
-
-While `flights` doesn't contain the complete name of each airline, it does have a **key** that links the data to the full airline names in the `airlines` data frame.
-
-- The **key** is `carrier`, which is a shared variable between `flights` and `airlines`. 
-
----
-
 # `inner_join()`
 
-`inner_join()` will allow us to append the *full names of the airlines that managed each flight* to the main `flights` data frame. 
-
-- To do so, we match up the *rows* in `flights` wil the rows in `airlines` that share the same *key* (`carrier`). 
-
-```{r}
-flightsJoined = flights %>%
-  inner_join(airlines, by = "carrier") %>%
-  select(carrier, name, flight, origin, dest, dep_delay) 
-head(flightsJoined, 5)
-```
-
----
-
-# `inner_join()`
-
-```{r, eval = FALSE}
-flightsJoined = flights %>%
-  inner_join(airlines, by = "carrier") %>%
-  select(carrier, name, flight, origin, dest, dep_delay) 
-```
-
-The resulting data frame from `inner_join()` contains *only the rows that have matching key values in both tables* (`flights` and `carrier`). 
-- Each row in `flights` has *exactly one* corresponding entry in `airlines`. 
-
-```{r}
-nrow(flights)
-nrow(flightsJoined)
-```
-
---
-
-**Note**: *Always* check your row count after using a `_join()` function to make sure it is what you expect. 
-
----
-
-# `inner_join()`
-
-Instead of appending `carrier` names from `airlines`, let's instead append the **destination** airport names via the `airports` table (run `View(airports)`).
-
---
+Let's append the **destination** airport names via the `airports` table (run `View(airports)`).
 
 The **matching key** between the `flights` and `airports` tables are:
 
