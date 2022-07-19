@@ -301,6 +301,20 @@ The result of this pipeline is a data frame that includes data on *only* the cou
 
 # `arrange()` rows
 
+The `arrange()` function will *sort the rows* of a data frame by a pre-specified *column*. 
+
+.center[
+```{r, echo = FALSE, dpi = 300}
+knitr::include_graphics("dplyr_arrange.png")
+```
+]
+
+While we can do this as an *exploratory* step in the `View()` window, `arrange()` allows us to perform additional operations on a custom-sorted data frame. 
+
+---
+
+# `arrange()` rows
+
 ```{r}
 gapminder %>%
   arrange(year, country)
@@ -367,32 +381,6 @@ Note that by calling this new data frame `weather`, we *overwrite* the existing 
 - **Why?** We are not *losing* any information; only *adding* new information. 
 
 - The original `temp` variable is still part of the data frame. 
-
----
-
-# `arrange()` rows
-
-The `arrange()` function will *sort the rows* of a data frame by a pre-specified *column*. 
-
-.center[
-```{r, echo = FALSE, dpi = 300}
-knitr::include_graphics("dplyr_arrange.png")
-```
-]
-
-While we can do this as an *exploratory* step in the `View()` window, `arrange()` allows us to perform additional operations on a custom-sorted data frame. 
-
----
-
-# `arrange()` rows
-
-The `gapminder` data frame is currently arranged by *country*, followed by *year*. 
-
-```{r}
-head(gapminder, 5)
-```
-
-Suppose we instead would like to sort `gapminder` by *year*, followed by *country*. 
 
 ---
 

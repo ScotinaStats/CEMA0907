@@ -299,6 +299,18 @@ The result of this pipeline is a data frame that includes data on *only* the cou
 
 # `arrange()` rows
 
+The `arrange()` function will *sort the rows* of a data frame by a pre-specified *column*. 
+
+.center[
+&lt;img src="dplyr_arrange.png" width="228" /&gt;
+]
+
+While we can do this as an *exploratory* step in the `View()` window, `arrange()` allows us to perform additional operations on a custom-sorted data frame. 
+
+---
+
+# `arrange()` rows
+
 
 ```r
 gapminder %&gt;%
@@ -384,42 +396,6 @@ Note that by calling this new data frame `weather`, we *overwrite* the existing 
 - **Why?** We are not *losing* any information; only *adding* new information. 
 
 - The original `temp` variable is still part of the data frame. 
-
----
-
-# `arrange()` rows
-
-The `arrange()` function will *sort the rows* of a data frame by a pre-specified *column*. 
-
-.center[
-&lt;img src="dplyr_arrange.png" width="228" /&gt;
-]
-
-While we can do this as an *exploratory* step in the `View()` window, `arrange()` allows us to perform additional operations on a custom-sorted data frame. 
-
----
-
-# `arrange()` rows
-
-The `gapminder` data frame is currently arranged by *country*, followed by *year*. 
-
-
-```r
-head(gapminder, 5)
-```
-
-```
-## # A tibble: 5 × 6
-##   country     continent  year lifeExp      pop gdpPercap
-##   &lt;fct&gt;       &lt;fct&gt;     &lt;int&gt;   &lt;dbl&gt;    &lt;int&gt;     &lt;dbl&gt;
-## 1 Afghanistan Asia       1952    28.8  8425333      779.
-## 2 Afghanistan Asia       1957    30.3  9240934      821.
-## 3 Afghanistan Asia       1962    32.0 10267083      853.
-## 4 Afghanistan Asia       1967    34.0 11537966      836.
-## 5 Afghanistan Asia       1972    36.1 13079460      740.
-```
-
-Suppose we instead would like to sort `gapminder` by *year*, followed by *country*. 
 
 ---
 
