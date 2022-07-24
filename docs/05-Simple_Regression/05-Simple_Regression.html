@@ -22,12 +22,15 @@ class: center, middle, inverse, title-slide
 
 
 
+
+
 # Needed Packages
 
 
 ```r
 library(tidyverse)
 library(moderndive)
+library(palmerpenguins) # Install this!
 ```
 
 ---
@@ -183,12 +186,11 @@ It is reasonable to suspect that the **outlier** with 33 bedrooms is *not repres
 
 
 ```r
-outlier_index = which(house_prices$bedrooms == 33) #15871
-house_prices = 
-  house_prices[-outlier_index, ]
+house_prices = house_prices %&gt;%
+  filter(bedrooms &lt; 33)
 ```
 
-- This removes the 15,871st row, which contains the outlier, from the data. 
+- This removes the outlier from the data. 
 
 ---
 
@@ -200,10 +202,6 @@ house_prices =
   geom_point() + 
   geom_smooth(method = "lm", se = FALSE) + 
   labs(x = "Bedrooms per home", y = "Price (in $)")
-```
-
-```
-## `geom_smooth()` using formula 'y ~ x'
 ```
 
 &lt;img src="05-Simple_Regression_files/figure-html/unnamed-chunk-8-1.png" width="45%" /&gt;
