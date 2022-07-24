@@ -32,9 +32,8 @@ library(tidyverse)
 library(moderndive)
 
 # Remove outlier
-outlier_index = which(house_prices$bedrooms == 33) #15871
-house_prices = 
-  house_prices[-outlier_index, ]
+house_prices = house_prices %&gt;%
+  filter(bedrooms &lt; 33)
 ```
 
 ---
@@ -577,14 +576,6 @@ We will model `average_sat_math` (*y*) as a function of:
 - `perc_disadvan` ( `\(x_{1}\)`): percent of study body considered "economically disadvantaged"
 
 - `size` ( `\(x_{2}\)`): size of enrollment (`small`, `medium`, `large`)
-
----
-
-# Practice
-
-Using `ggplot()`, construct the scatterplot using the **interaction model**. 
-
-Using `geom_parallel_slopes()`, construct the scatterplot using the **parallel slopes model**. 
 
 ---
 
