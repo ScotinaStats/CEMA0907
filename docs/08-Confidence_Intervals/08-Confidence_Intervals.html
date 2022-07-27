@@ -308,12 +308,31 @@ After `specify()`-ing the main variable of interest, we use `generate()` to gene
 - Here, we can easily create 1,000 bootstrap samples:
 
 ```r
-thousand_bootstrap_samples = pennies_sample %&gt;%
+pennies_sample %&gt;%
   specify(response = year) %&gt;%
   generate(reps = 1000, type = "bootstrap")
 ```
 
-If you use `View(thousand_bootstrap_samples)`, you will see that there are 50,000 rows! 
+```
+## Response: year (numeric)
+## # A tibble: 50,000 × 2
+## # Groups:   replicate [1,000]
+##    replicate  year
+##        &lt;int&gt; &lt;dbl&gt;
+##  1         1  2015
+##  2         1  1971
+##  3         1  1993
+##  4         1  1990
+##  5         1  2008
+##  6         1  1983
+##  7         1  1996
+##  8         1  1981
+##  9         1  2017
+## 10         1  2015
+## # … with 49,990 more rows
+```
+
+If you view this dataset, you will see that there are 50,000 rows! 
 - We took 1,000 bootstrap samples, each of size 50. 
 
 ---
@@ -324,7 +343,7 @@ Once we have 1,000 **bootstrap samples**, we need to calculate a **summary stati
 - In this example, the *summary statistic* is the **mean**. 
 
 ```r
-bootstrap_distribution = pennies_sample %&gt;% 
+pennies_sample %&gt;% 
   specify(response = year) %&gt;% 
   generate(reps = 1000, type = "bootstrap") %&gt;% 
   calculate(stat = "mean")
@@ -349,10 +368,14 @@ This generates a data frame with 1,000 rows: each row containing the sample mean
 
 
 ```r
-visualize(bootstrap_distribution)
+pennies_sample %&gt;% 
+  specify(response = year) %&gt;% 
+  generate(reps = 1000, type = "bootstrap") %&gt;% 
+  calculate(stat = "mean") %&gt;%
+  visualize()
 ```
 
-&lt;img src="08-Confidence_Intervals_files/figure-html/unnamed-chunk-20-1.png" width="50%" /&gt;
+&lt;img src="08-Confidence_Intervals_files/figure-html/unnamed-chunk-20-1.png" width="40%" /&gt;
 
 ---
 
@@ -383,11 +406,7 @@ Common **confidence levels** include 90%, 95%, and 99%.
 
 --
 
-Using the **bootstrap distribution** (i.e., `bootstrap_distribution` from earlier), there are two ways we can obtain a confidence interval for the population mean age of US pennies:
-
-1. The **percentile method**
-
-2. The **standard error method**
+Using the **bootstrap distribution** (i.e., `bootstrap_distribution` from earlier), we can use the **percentile method** to obtain a confidence interval for the population mean age of US pennies.
 
 ---
 
@@ -397,8 +416,12 @@ The only thing you need to do here is to use the `get_ci()` function from the `i
 
 
 ```r
-percentile_ci = bootstrap_distribution %&gt;% 
+percentile_ci = pennies_sample %&gt;% 
+  specify(response = year) %&gt;% 
+  generate(reps = 1000, type = "bootstrap") %&gt;% 
+  calculate(stat = "mean") %&gt;%
   get_ci(level = 0.95, type = "percentile") 
+
 # 0.95 and "percentile" are default values
 percentile_ci
 ```
@@ -407,7 +430,7 @@ percentile_ci
 # A tibble: 1 × 2
   lower_ci upper_ci
      &lt;dbl&gt;    &lt;dbl&gt;
-1    1991.    2000.
+1    1991.    1999.
 ```
 
 --
@@ -425,84 +448,15 @@ A cool thing you can do in R is to use the `visualize()` function to plot the *c
 
 
 ```r
-visualize(bootstrap_distribution) + 
+pennies_sample %&gt;% 
+  specify(response = year) %&gt;% 
+  generate(reps = 1000, type = "bootstrap") %&gt;% 
+  calculate(stat = "mean") %&gt;%
+  visualize()  + 
   shade_ci(endpoints = percentile_ci, 
            color = "hotpink", fill = "chartreuse")
 ```
 
----
-
-# The Standard Error Method
-
-Our **bootstrap distribution** is close to symmetric and bell-shaped, or **Normally distributed**. 
-
-If this is the case, we can use a shortcut formula to calculate the lower and upper endpoints of the confidence interval: 
-`$$\bar{x}\pm (multiplier)\cdot SE$$`
-where `\(\bar{x}\)` is the **sample statistic** (`x_bar`, obtained earlier), and `\(SE\)` stands for **standard error**, or the *standard deviation of the bootstrap distribution*.
-- For a 95% confidence interval, the value of *multiplier* is **1.96**. 
-
----
-
-# Why 1.96?
-
-For any distribution that is **Normally-shaped**, roughly 95% of the values lie within *two standard deviations of the mean*.
-
-- In the case of a bootstrap distribution, these standard deviations are also **standard errors**. 
-
-Thus for a 95% confidence interval for the **mean**, 95% of values of the bootstrap distribution will lie within `\(\pm\)` 1.96 (or nearly 2) *standard errors* of `\(\bar{x}\)`. 
-
---
-
-In a **Normal distribution**, roughly *68%* of the values lie within *one standard deviation of the mean*. 
-
-- What would the *multiplier* be for a 68% confidence interval?
-
-
----
-
-# The Standard Error Method
-
-As with the **percentile method**, we use the `get_ci()` function here. But there are a few slight differences:
-
-```r
-standard_error_ci = bootstrap_distribution %&gt;% 
-* get_ci(level = 0.95, type = "se", point_estimate = x_bar)
-standard_error_ci
-```
-
-```
-# A tibble: 1 × 2
-  lower_ci upper_ci
-     &lt;dbl&gt;    &lt;dbl&gt;
-1    1991.    2000.
-```
-
-- We have to specify that we want a CI using the **standard error method** (using `type = "se"`). 
-
-- We also have to provide the **point estimate**, which you should calculate beforehand. 
-
----
-
-# The Standard Error Method
-
-As with the **percentile method**, we use the `get_ci()` function here. But there are a few slight differences:
-
-```r
-standard_error_ci = bootstrap_distribution %&gt;% 
-  get_ci(level = 0.95, type = "se", point_estimate = x_bar)
-standard_error_ci
-```
-
-```
-# A tibble: 1 × 2
-  lower_ci upper_ci
-     &lt;dbl&gt;    &lt;dbl&gt;
-1    1991.    2000.
-```
-
-- Our range of plausible values for the mean year of US pennies in 2019 is between 1991 and 2000 years, with **95% confidence**. 
-    - This is *identical* to the CI obtained using the **percentile method** (b/c the bootstrap distribution is **Normal**)!
-    
 ---
 
 class: center, middle, frame
@@ -530,7 +484,7 @@ mean(pennies_pop$year)
 ```
 
 ```
-[1] 1995.146
+[1] 1995.399
 ```
 
 --
@@ -559,7 +513,7 @@ bootstrap_distribution_new %&gt;%
 ## # A tibble: 1 × 2
 ##   lower_ci upper_ci
 ##      &lt;dbl&gt;    &lt;dbl&gt;
-## 1    1992.    2001.
+## 1    1989.    1997.
 ```
 
 This new confidence interval *also* contains `\(\mu\)` (1995). 
@@ -617,7 +571,10 @@ In order to be more confident in our best guess of a range of values, we need to
 
 
 ```r
-bootstrap_distribution %&gt;% 
+pennies_sample %&gt;% 
+  specify(response = year) %&gt;% 
+  generate(reps = 1000, type = "bootstrap") %&gt;% 
+  calculate(stat = "mean") %&gt;% 
   get_ci(level = 0.80, type = "percentile") 
 ```
 
@@ -639,7 +596,10 @@ In order to be more confident in our best guess of a range of values, we need to
 
 
 ```r
-bootstrap_distribution %&gt;% 
+pennies_sample %&gt;% 
+  specify(response = year) %&gt;% 
+  generate(reps = 1000, type = "bootstrap") %&gt;% 
+  calculate(stat = "mean") %&gt;% 
   get_ci(level = 0.95, type = "percentile") 
 ```
 
@@ -661,7 +621,10 @@ In order to be more confident in our best guess of a range of values, we need to
 
 
 ```r
-bootstrap_distribution %&gt;% 
+pennies_sample %&gt;% 
+  specify(response = year) %&gt;% 
+  generate(reps = 1000, type = "bootstrap") %&gt;% 
+  calculate(stat = "mean") %&gt;% 
   get_ci(level = 0.99, type = "percentile") 
 ```
 
@@ -669,7 +632,7 @@ bootstrap_distribution %&gt;%
 ## # A tibble: 1 × 2
 ##   lower_ci upper_ci
 ##      &lt;dbl&gt;    &lt;dbl&gt;
-## 1    1990.    2001.
+## 1    1990.    2000.
 ```
 
 ---
@@ -681,83 +644,6 @@ In general, *larger sample sizes tend to produce narrower confidence intervals*.
     - Also, the **standard error decreases**. 
     
 For example, a 95% confidence interval with `\(n=50\)` will be *narrower* than a 95% confidence interval with `\(n=25\)`. 
-
----
-
-class: center, middle
-
-# Bootstrap vs. Sampling Distributions
-
----
-
-# Comparing Bootstrap and Sampling Distributions
-
-Recall that in the last module, we constructed a **sampling distribution** of the proportion of red balls in a bowl, using the `bowl` dataset. 
-
-- This was done by taking 1,000 *replications* of size 100 (or 10, or 50) *without replacement* from the "population" of 2,400 objects in the bowl. 
-
-The reason the **bootstrap** is so useful in application is that we will never actually take 1,000 unique samples from a population. 
-
-- The **bootstrap distribution** serves as an *approximation* to the sampling distribution that we constructed before. 
-
---
-
-Let's compare the two distributions and see how well they match!
-
----
-
-# Sampling Distribution (from Module 3)
-
-
-
-
-```r
-virtual_sample_50 = rep_sample_n(bowl, size = 50, reps = 1000)
-prop_red_50 = tally(color ~ replicate, format = "proportion", 
-                    data = virtual_sample_50)["red", ]
-gf_histogram( ~ prop_red_50)
-```
-
-&lt;img src="08-Confidence_Intervals_files/figure-html/unnamed-chunk-34-1.png" width="50%" /&gt;
-
----
-
-# Bootstrap Distribution
-
-
-
-
-```r
-set.seed(12)
-bowl_sample_1 = rep_sample_n(bowl, size = 50, reps = 1)
-bootstrap_distribution = bowl_sample_1 %&gt;% 
-  specify(response = color, success = "red") %&gt;% 
-  generate(reps = 1000, type = "bootstrap") %&gt;% 
-  calculate(stat = "prop")
-gf_histogram( ~ stat, data = bootstrap_distribution)
-```
-
-&lt;img src="08-Confidence_Intervals_files/figure-html/unnamed-chunk-36-1.png" width="40%" /&gt;
-            
----
-
-# Comparison
-
-.pull-left[
-![](08-Confidence_Intervals_files/figure-html/unnamed-chunk-37-1.png)&lt;!-- --&gt;
-
-(1,000 sample proportions)
-]
-
-.pull-right[
-![](08-Confidence_Intervals_files/figure-html/unnamed-chunk-38-1.png)&lt;!-- --&gt;
-
-(1,000 bootstrap sample proportions)
-]
-
-
-
-
     </textarea>
 <style data-target="print-only">@media screen {.remark-slide-container{display:block;}.remark-slide-scaler{box-shadow:none;}}</style>
 <script src="https://remarkjs.com/downloads/remark-latest.min.js"></script>
