@@ -43,7 +43,7 @@ library(nycflights13)
 
 # `bush_approval` data
 
-Download the `bush_approval` data from Moodle, and import it into R. 
+Download the `bush_approval` data from Canvas, and import it into R. 
 
 ```{r, echo = FALSE, message = FALSE, warning = FALSE}
 bush_approval <- read_csv("~/Dropbox/Teaching/03-Simmons Courses/STAT228-Introduction to Data Science/Data/bush_approval.csv")
@@ -231,71 +231,6 @@ The `pivot_wider()` syntax is nearly *identical* to `pivot_longer()`, except wit
 
 ---
 
-# Example
-
-Let's look at the `drinks` data frame from the `fivethirtyeight` package. 
-
-```{r, comment = ""}
-library(fivethirtyeight)
-drinks
-```
-
----
-
-# Example
-
-```{r, echo = FALSE, out.width = "50%"}
-knitr::include_graphics("fivethirtyeight_drinks.png")
-```
-
----
-
-# Example
-
-Run the following code to simplify the data frame a bit:
-
-```{r, eval = FALSE}
-drinks_smaller = drinks %>%
-  filter(country %in% c("USA", "France", "China", "Italy", "Ireland")) %>%
-  select(-total_litres_of_pure_alcohol)
-View(drinks_smaller)
-```
-
-```{r, echo = FALSE, comment = ""}
-drinks_smaller = drinks %>%
-  filter(country %in% c("USA", "France", "China", "Italy", "Ireland")) %>%
-  select(-total_litres_of_pure_alcohol)
-drinks_smaller
-```
-
----
-
-# Practice
-
-Convert `drinks_smaller` to a **tidy** data frame. 
-
-**Starting Point**
-```{r, comment = ""}
-drinks_smaller
-```
-
----
-
-# Practice
-
-Convert `drinks_smaller` to a **tidy** data frame. 
-
-**Ending Point**
-```{r, echo = FALSE, eval = TRUE}
-drinks_tidy = drinks_smaller %>%
-  gather(key = type, value = servings, -country)
-```
-```{r, comment = ""}
-drinks_tidy
-```
-
----
-
 class: center, middle
 
 # Data Cleaning: Tips and Tricks
@@ -429,24 +364,6 @@ video_games %>%
 
 ---
 
-# `fct_lump()`
-
-**Note**: In this case, I would probably make the barplot *without* the `Other` category in this context. 
-
-- But using `fct_lump()` makes it a bit easier to `filter()` afterwards:
-
-```{r, eval = FALSE}
-video_games %>%
-  mutate(publisher_lump = fct_lump(publisher, n = 5)) %>% 
-  filter(publisher_lump != "Other") %>% #<<
-  ggplot(aes(x = publisher_lump)) + 
-  geom_bar() + 
-  labs(x = "Publisher", y = "Count") + 
-  coord_flip()
-```
-
----
-
 # `fct_reorder()` with `geom_col()`
 
 Let's stay with `forcats` for a bit. 
@@ -553,23 +470,7 @@ nyc_restaurants_sep = nyc_restaurants %>%
 
 - The `sep` argument is the character that serves as the *separator* between columns. 
     - In the original dataset, the `inspection_type` variable includes the different pieces of information separated by a `"/"`.
-
----
-
-# `separate()`
-
-```{r, eval = FALSE}
-nyc_restaurants_sep %>%
-  count(inspection_program) %>%
-  na.omit() %>% # REMOVES NA CATEGORY
-  ggplot(aes(x = fct_reorder(inspection_program, n), y = n)) + 
-  geom_col(aes(fill = inspection_program), color = "black") + 
-  labs(x = "", y = "Count") + 
-  coord_flip() + 
-  theme_bw() + 
-  theme(legend.position = "none")
-```
-
+    
 ---
 
 # `separate()`
@@ -666,8 +567,6 @@ This dataset contains open data on **hotel booking demand** via [TidyTuesday](ht
 hotels <- readr::read_csv('https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2020/2020-02-11/hotels.csv')
 ```
 
---
-
 **Two variables of interest**:
 
 - `hotel`: `city` or `resort`
@@ -732,7 +631,6 @@ hotels = hotels %>%
                      arrival_date_month %in% c("March", "April", "May") ~ "Spring", 
                      arrival_date_month %in% c("June", "July", "August") ~ "Summer", 
                      arrival_date_month %in% c("September", "October", "November") ~ "Fall"))
-
 ```
 
 ---
@@ -748,7 +646,6 @@ hotels %>%
   labs(x = "", y = "", fill = "",
        title = "Hotel Reservations (by season)") + 
   scale_y_continuous(labels = scales::comma) +
-  coord_flip() +
-  theme_minimal()
+  coord_flip() 
 ```
 
