@@ -465,64 +465,9 @@ class: center, middle, frame
 
 ---
 
-# Interpreting the Confidence Interval
-
-We have done a lot of calculations in this module, but *what does it all mean*?
-
-The purpose of confidence intervals is to provide a range of plausible values for an *unknown* parameter (in this case, the population mean `\(\mu\)`). 
-- Using the **percentile method**, one such interval is `\([1991, 2000]\)`. 
-
---
-
-Let's modify `pennies_sample` to **simulate** a population of US pennies.
-
-```r
-pennies_pop = pennies_sample %&gt;%
-  sample_n(10000, replace = TRUE)
-
-mean(pennies_pop$year)
-```
-
-```
-[1] 1995.399
-```
-
---
-
-Thus, `\(\mu=1995\)` (approx.) which *falls in the confidence interval*. 
-
----
-
-# Using a new `pennies_sample`
-
-We can use the `infer` pipeline to re-do the entire set of exercises today, but using a *new* sample of pennies from the `pennies` data frame:
-
-
-
-```r
-bootstrap_distribution_new = pennies_pop %&gt;%
-  rep_sample_n(size = 40, reps = 1) %&gt;%
-  specify(response = year) %&gt;% 
-  generate(reps = 1000) %&gt;% 
-  calculate(stat = "mean")
-bootstrap_distribution_new %&gt;%
-  get_ci()
-```
-
-```
-## # A tibble: 1 × 2
-##   lower_ci upper_ci
-##      &lt;dbl&gt;    &lt;dbl&gt;
-## 1    1989.    1997.
-```
-
-This new confidence interval *also* contains `\(\mu\)` (1995). 
-
----
-
 # Calculating Many CIs
 
-We can repeat this process 100 times (don't worry about the code), and generate 100 95% confidence intervals:
+--
 
 .center[
 &lt;img src="ci_sim.png" width="60%" /&gt;
