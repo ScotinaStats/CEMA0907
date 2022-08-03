@@ -145,7 +145,7 @@ sentiment_counts = song_sentiment %>%
 
 sentiment_counts %>%
   group_by(sentiment) %>%
-  top_n(10, wt = n) %>%
+  slice_max(order_by = n, n = 10) %>%
   ggplot(aes(x = fct_reorder(word, n), y = n, 
              fill = sentiment)) + 
   geom_col() + 
@@ -185,91 +185,9 @@ sentiment_counts %>%
 
 class: center, middle
 
-# Data Cleaning: Tips and Tricks
+# One More Thing
 
-## (Anthony's Favorite Things)
-
----
-
-# Counting Observations per group
-
-```{r, message = FALSE, warning = FALSE}
-video_games <- read_csv("https://raw.githubusercontent.com/rfordatascience/tidytuesday/master/data/2019/2019-07-30/video_games.csv")
-```
-
-- `number`:	Game number
-- `game`: Game Title
-- `release_date`:	Release date
-- `price`: US Dollars + Cents
-- `owners`: Estimated number of people owning this game
-- `developer`: Group that developed the game
-- `publisher`: Group that published the game
-- `average_playtime`: Average playtime in minutes
-- `median_playtime`: Median playtime in minutes
-- `metascore`: Metascore rating
-
-**Question**: How would you count the number of games *per publisher*, and then *arrange* by count?
-
----
-
-# Counting Observations per group
-
-Using some of `dplyr`'s data wrangling functions, we can do this in several lines:
-
-```{r, results = 'hide'}
-video_games %>%
-  group_by(publisher) %>%
-  summarize(N_games = n()) %>%
-  arrange(desc(N_games))
-```
-
---
-
-This pipeline:
-
-1. **groups by** `publisher`, 
-
-2. **summarizes** the data by simply counting the *number of rows* (`n()`) per publisher, and 
-
-3. **arranges in descending order** by the newly-created `N_games`. 
-
----
-
-# `count()`
-
-The `count()` function is one of my **favorites**!
-
-- `count()` simply *count* the number of observations **by group**. 
-
-```{r, eval = FALSE}
-video_games %>%
-  count(publisher)
-```
-
-- This returns a table with the groups and the number of observations per group. 
-
----
-
-# `count()`
-
-If you want to `arrange` by `n` (the number of observations per group), you *could* use arrange...
-
-```{r, eval = FALSE}
-video_games %>%
-  count(publisher) %>%
-  arrange(desc(n))
-```
-
----
-
-# `count()`
-
-You *could also* just use the `sort = TRUE` option in `count()` to sort in **descending order**:
-
-```{r}
-video_games %>%
-  count(publisher, sort = TRUE)
-```
+## case_when()
 
 ---
 
